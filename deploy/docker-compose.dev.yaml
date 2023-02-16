@@ -1,0 +1,29 @@
+services:
+  api:
+    ports:
+      # Exposes application port.
+    - "8000:8000"
+    volumes:
+      # Adds current directory as volume.
+    - .:/app/src/
+    environment:
+      # Enables autoreload.
+      EFMARKETPLACE_RELOAD: "True"
+
+  adminer:
+    build:
+      context: .
+      dockerfile: docker/adminer/Dockerfile
+
+    restart: always
+
+    env_file:
+      - .env
+    environment:
+      - PMA_HOST=db:5432
+
+    depends_on:
+      - db
+
+    ports:
+      - ${ADMINER_EXTERNAL_PORT}:8080

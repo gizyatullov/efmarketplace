@@ -1,0 +1,67 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/docker/api/Dockerfile
+    image: efmarketplace:${VERSION:-latest}
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - ${API_SERVER_PORT}:8000
+    environment:
+      EFMARKETPLACE_HOST: 0.0.0.0
+      POSTGRES_HOST: efmarketplace-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: efmarketplace
+      POSTGRES_PASSWORD: efmarketplace
+      POSTGRES_DB: efmarketplace
+      REDIS_HOST: efmarketplace-redis
+      REDIS_PORT: 6379
+    command: [ "poetry", "run", "uvicorn", "efmarketplace.web.application:get_app", "--host", "0.0.0.0", "--port", "8000" ]
+
+  db:
+    build:
+      context: .
+      dockerfile: ./deploy/docker/postgresql/Dockerfile
+    hostname: efmarketplace-db
+    environment:
+      POSTGRES_PASSWORD: efmarketplace
+      POSTGRES_USER: efmarketplace
+      POSTGRES_DB: efmarketplace
+    volumes:
+      - efmarketplace-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U efmarketplace
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  redis:
+    build:
+      context: .
+      dockerfile: ./deploy/docker/redis/Dockerfile
+    hostname: efmarketplace-redis
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+      REDIS_PORT: 6379
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+
+volumes:
+  efmarketplace-db-data:
+    name: efmarketplace-db-data
+
+networks:
+  default:
+    driver: bridge
