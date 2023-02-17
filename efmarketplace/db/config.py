@@ -9,6 +9,7 @@ MODELS_MODULES: List[str] = [
     'efmarketplace.db.models.city',
     'efmarketplace.db.models.category',
     'efmarketplace.db.models.subcategory',
+    'efmarketplace.db.models.ticket',
 ]  # noqa: WPS407
 
 TORTOISE_CONFIG = {  # noqa: WPS407

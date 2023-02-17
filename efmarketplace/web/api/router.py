@@ -7,7 +7,8 @@ from efmarketplace.web.api import (auth,
                                    cities,
                                    categories,
                                    subcategories,
-                                   prices, )
+                                   prices,
+                                   ticket, )
 
 api_router = APIRouter()
 api_router.include_router(docs.router)
@@ -19,3 +20,4 @@ api_router.include_router(categories.router, prefix='/category', tags=['Category
 api_router.include_router(subcategories.router, prefix='/subcategory',
                           tags=['Subcategory'])
 api_router.include_router(prices.router, prefix='/price', tags=['Price'])
+api_router.include_router(ticket.router, tags=['Ticket'])

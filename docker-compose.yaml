@@ -1,9 +1,8 @@
 services:
-  api:
+  efmarketplace:
     build:
       context: .
-      dockerfile: ./deploy/docker/api/Dockerfile
-    image: efmarketplace:${VERSION:-latest}
+      dockerfile: ./docker/efmarketplace/Dockerfile
     restart: always
     env_file:
       - .env
@@ -23,12 +22,11 @@ services:
       POSTGRES_DB: efmarketplace
       REDIS_HOST: efmarketplace-redis
       REDIS_PORT: 6379
-    command: [ "poetry", "run", "uvicorn", "efmarketplace.web.application:get_app", "--host", "0.0.0.0", "--port", "8000" ]
 
   db:
     build:
       context: .
-      dockerfile: ./deploy/docker/postgresql/Dockerfile
+      dockerfile: ./docker/postgresql/Dockerfile
     hostname: efmarketplace-db
     environment:
       POSTGRES_PASSWORD: efmarketplace
@@ -46,7 +44,7 @@ services:
   redis:
     build:
       context: .
-      dockerfile: ./deploy/docker/redis/Dockerfile
+      dockerfile: ./docker/redis/Dockerfile
     hostname: efmarketplace-redis
     restart: always
     environment:

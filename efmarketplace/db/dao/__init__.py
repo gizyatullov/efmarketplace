@@ -16,6 +16,8 @@ __all__ = [
     'category_repository',
     'SubcategoryDAO',
     'subcategory_repository',
+    'TicketDAO',
+    'ticket_repository',
 ]
 
 user_repository = UserDAO()

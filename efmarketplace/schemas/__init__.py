@@ -7,3 +7,4 @@ from .city import *
 from .category import *
 from .subcategory import *
 from .price import *
+from .notification import *
