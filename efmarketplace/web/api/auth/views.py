@@ -34,19 +34,19 @@ def get_config():
 )
 async def auth_user(
     cmd: schemas.AuthCommand,
-    Authorize: AuthJWT = Depends(),
+    authorize: AuthJWT = Depends(),
     redis_pool: ConnectionPool = Depends(get_redis_pool),
 ):
-    if not await auth_service.verify_captcha_in_redis(redis_pool=redis_pool,
-                                                      uid_captcha=cmd.uid_captcha,
-                                                      value_captcha=cmd.value_captcha):
-        raise IncorrectCaptcha
+    # if not await auth_service.verify_captcha_in_redis(redis_pool=redis_pool,
+    #                                                   uid_captcha=cmd.uid_captcha,
+    #                                                   value_captcha=cmd.value_captcha):
+    #     raise IncorrectCaptcha
 
     user = await auth_service.check_user_password(cmd=cmd)
 
-    access_token = Authorize.create_access_token(subject=user.username,
+    access_token = authorize.create_access_token(subject=user.username,
                                                  expires_time=access_token_expires)
-    refresh_token = Authorize.create_refresh_token(subject=user.username,
+    refresh_token = authorize.create_refresh_token(subject=user.username,
                                                    expires_time=refresh_token_expires)
     return schemas.Auth(
         access_token=access_token,
@@ -60,14 +60,14 @@ async def auth_user(
     description='Get new tokens pair.',
 )
 async def create_new_token_pair(
-    Authorize: AuthJWT = Depends(),
+    authorize: AuthJWT = Depends(),
     credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
-    Authorize.jwt_refresh_token_required()
-    current_user = Authorize.get_jwt_subject()
-    access_token = Authorize.create_access_token(subject=current_user,
+    authorize.jwt_refresh_token_required()
+    current_user = authorize.get_jwt_subject()
+    access_token = authorize.create_access_token(subject=current_user,
                                                  expires_time=access_token_expires)
-    refresh_token = Authorize.create_refresh_token(subject=current_user,
+    refresh_token = authorize.create_refresh_token(subject=current_user,
                                                    expires_time=refresh_token_expires)
     return schemas.Auth(
         access_token=access_token,
@@ -79,11 +79,11 @@ async def create_new_token_pair(
     '/me',
 )
 async def get_me(
-    Authorize: AuthJWT = Depends(),
+    authorize: AuthJWT = Depends(),
     credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
-    Authorize.jwt_required()
-    return Authorize.get_raw_jwt()
+    authorize.jwt_required()
+    return authorize.get_raw_jwt()
 
 
 @router.post(

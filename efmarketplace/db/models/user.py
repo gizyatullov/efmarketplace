@@ -24,8 +24,14 @@ class User(models.Model):
     is_banned = fields.BooleanField(default=False)
     user_ban_date = fields.DatetimeField(null=True)
 
+    notification_statuses = fields.ReverseRelation['NotificationStatus']
+
+    class Meta:
+        table = 'users'
+        ordering = ['-created']
+
     def __str__(self) -> str:
-        return f'{self.username} | {self.role_name}'
+        return f'User ({self.username}) ({self.role_name})'
 
     async def set_password(self, password: str) -> None:
         password_bytes = password.encode('utf-8')

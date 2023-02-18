@@ -1,21 +1,28 @@
 from typing import Union
 from datetime import datetime
+from enum import Enum
 
 from pydantic import Field, PositiveInt
 
 from .base import BaseModel
+from .user import UserFields
 
 __all__ = [
+    'NotificationFields',
     'NotificationStatusFields',
+    'NotificationStatus',
+    'Notification',
+    'CreateNotificationCommand',
+    'ReadNotificationQuery',
+    'ReadNotificationWithUserQuery',
+    'StatusReceivedNotification',
 ]
 
 
-class NotificationStatusFields:
-    id = Field(description='Notification status ID', example=2)
-    recipient_id = Field(description='Recipient ID', example=2)
-    status = Field(description='Status notification',
-                   example=False,
-                   default=False)
+class StatusReceivedNotification(Enum):
+    ANY = 'any'
+    NOT_READ = 'not read'
+    READ = 'read'
 
 
 class NotificationFields:
@@ -25,8 +32,18 @@ class NotificationFields:
     whom = Field(description='What kind of notification ?',
                  example='alerts to everyone')
     text = Field(description='Text notification', example='text notification')
-    status = Field(description='Notification status', example=NotificationStatusFields)
     created = Field(description='Creation time', example='2023-02-17 15:18:01')
+    which = Field(description='What is the status of notifications ?',
+                  example=StatusReceivedNotification.ANY.value)
+
+
+class NotificationStatusFields:
+    id = Field(description='Notification status ID', example=2)
+    user_id = Field(description='Recipient ID', example=2)
+    notification_id = Field(description='Notification ID', example=2)
+    status = Field(description='Status notification',
+                   example=False,
+                   default=False)
 
 
 class BaseNotificationStatus(BaseModel):
@@ -45,7 +62,8 @@ class BaseNotification(BaseModel):
 
 class NotificationStatus(BaseNotificationStatus):
     id: PositiveInt = NotificationStatusFields.id
-    recipient_id: PositiveInt = NotificationStatusFields.recipient_id
+    user_id: PositiveInt = NotificationStatusFields.user_id
+    notification_id: PositiveInt = NotificationStatusFields.notification_id
     status: bool = NotificationStatusFields.status
 
 
@@ -55,7 +73,6 @@ class Notification(BaseNotification):
     sender: str = NotificationFields.sender
     whom: str = NotificationFields.whom
     text: str = NotificationFields.text
-    status: NotificationStatus = NotificationFields.status
     created: datetime = NotificationFields.created
 
 
@@ -68,6 +85,10 @@ class CreateNotificationCommand(BaseNotification):
 
 
 # Query
-class ReadNotificationQuery(BaseModel):
-    user_uid: Union[PositiveInt, str]
-    which: str
+class ReadNotificationQuery(BaseNotification):
+    which: StatusReceivedNotification = NotificationFields.which
+
+
+class ReadNotificationWithUserQuery(BaseNotification):
+    user_uid: Union[PositiveInt, str] = UserFields.id
+    which: StatusReceivedNotification = NotificationFields.which

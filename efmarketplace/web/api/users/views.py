@@ -1,7 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from redis.asyncio import ConnectionPool
+from fastapi_jwt_auth import AuthJWT
 
 from efmarketplace import schemas
 from efmarketplace.services import user_service, auth_service
@@ -26,10 +28,11 @@ async def create_user(
     cmd: schemas.CreateUserCommand,
     redis_pool: ConnectionPool = Depends(get_redis_pool),
 ):
-    if not await auth_service.verify_captcha_in_redis(redis_pool=redis_pool,
-                                                      uid_captcha=cmd.uid_captcha,
-                                                      value_captcha=cmd.value_captcha):
-        raise IncorrectCaptcha
+    # Temporarily disabled captcha for ease of development
+    # if not await auth_service.verify_captcha_in_redis(redis_pool=redis_pool,
+    #                                                   uid_captcha=cmd.uid_captcha,
+    #                                                   value_captcha=cmd.value_captcha):
+    #     raise IncorrectCaptcha
 
     return await user_service.create_user(cmd=cmd)
 
@@ -116,3 +119,17 @@ async def update_user(
     return await user_service.update_specific_user_by_username(
         cmd=cmd,
     )
+
+
+@router.post(
+    '/notification',
+    status_code=status.HTTP_200_OK,
+    description='Receiving notifications by the user.',
+)
+async def get_notification(
+    cmd: schemas.ReadNotificationQuery,
+    authorize: AuthJWT = Depends(),
+    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
+):
+    authorize.jwt_required()
+    return authorize.get_jwt_subject()

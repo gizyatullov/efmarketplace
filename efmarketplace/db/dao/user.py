@@ -12,9 +12,6 @@ __all__ = ['UserDAO']
 
 
 class UserDAO(BaseDAO):
-    class Meta:
-        table = 'users'
-
     def get_model(self) -> models.Model:
         return User
 

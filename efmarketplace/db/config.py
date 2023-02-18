@@ -9,6 +9,8 @@ MODELS_MODULES: List[str] = [
     'efmarketplace.db.models.city',
     'efmarketplace.db.models.category',
     'efmarketplace.db.models.subcategory',
+    'efmarketplace.db.models.notification',
+    'efmarketplace.db.models.notification_status',
     'efmarketplace.db.models.ticket',
 ]  # noqa: WPS407
 

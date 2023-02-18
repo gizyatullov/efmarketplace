@@ -17,4 +17,4 @@ class City(models.Model):
         related_name='cities')
 
     def __str__(self) -> str:
-        return self.name
+        return f'City ({self.name})'

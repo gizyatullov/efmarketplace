@@ -5,7 +5,8 @@ from efmarketplace.db.dao import (user_repository,
                                   country_repository,
                                   city_repository,
                                   category_repository,
-                                  subcategory_repository, )
+                                  subcategory_repository,
+                                  notification_repository, )
 from .auth import AuthService
 from .user import UserService
 from .country import CountryService
@@ -13,6 +14,7 @@ from .city import CityService
 from .category import CategoryService
 from .subcategory import SubcategoryService
 from .price import PriceService
+from .notification import NotificationService
 
 __all__ = [
     'user_service',
@@ -22,6 +24,7 @@ __all__ = [
     'category_service',
     'subcategory_service',
     'price_service',
+    'notification_service',
 ]
 
 image_captcha = ImageCaptcha()
@@ -42,3 +45,6 @@ subcategory_service = SubcategoryService(
     subcategory_repository=subcategory_repository
 )
 price_service = PriceService()
+notification_service = NotificationService(
+    notification_repository=notification_repository
+)
