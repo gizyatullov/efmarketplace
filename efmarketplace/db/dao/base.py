@@ -1,41 +1,41 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Union
+from abc import ABC
+from typing import Any, Dict, Generic, List, Tuple, Type, TypeVar, Union
 
-from tortoise import models, Model
+import tortoise
 
-__all__ = [
-    'BaseDAO',
-]
+__all__ = ["BaseDAO"]
+
+DAOModel = TypeVar("DAOModel", bound=tortoise.models.Model)
 
 
-class BaseDAO(ABC):
+class BaseDAO(ABC, Generic[DAOModel]):
     """Class for accessing to tortoise model."""
 
-    @abstractmethod
-    def get_model(self) -> models.Model:
-        raise NotImplementedError
+    _model: Type[DAOModel]
 
-    async def record_exists(self, record_id: int) -> bool:
-        obj = await self.get_by_id(record_id)
+    @classmethod
+    async def record_exists(cls, id_: int) -> bool:
+        obj = await cls.get_by_id(id_)
         return True if obj else False
 
-    async def create(self, data: Dict[str, Any]) -> Any:
+    @classmethod
+    async def create(cls, data: Dict[str, Any]) -> DAOModel:
         """
-        Add single dummy to session.
+        Add single model to session.
         """
-        model = self.get_model()
-        return await model.create(**data)
+        return await cls._model.create(**data)
 
-    async def update_by_models(self, models: list):
+    @staticmethod
+    async def update_by_models(models: List[DAOModel]) -> None:
         """
-        objects: list[model]
+        :param models: List[Model]
         """
         for model in models:
             await model.save()
 
-    async def update(self, id_: int, data: Dict[str, Any]) -> models.Model:
-        model = self.get_model()
-        obj = await model.get(id=id_)
+    @classmethod
+    async def update(cls, id_: int, data: Dict[str, Any]) -> DAOModel:
+        obj = await cls._model.get(id=id_)
 
         for k, v in data.items():
             setattr(obj, k, v)
@@ -43,12 +43,14 @@ class BaseDAO(ABC):
         await obj.save()
         return obj
 
-    async def get_by_id(self, id: int) -> models.Model:
-        model = self.get_model()
-        return await model.get(id=id)
+    @classmethod
+    async def get_by_id(cls, id_: int) -> DAOModel:
+        return await cls._model.get(id=id_)
 
-    async def get_all(self, limit: int, offset: int, with_count=False) -> Union[
-        tuple[list[Model], int], list[Model]]:
+    @classmethod
+    async def get_all(
+        cls, limit: int, offset: int, with_count: bool = False
+    ) -> Union[Tuple[List[DAOModel], int], List[DAOModel]]:
         """
         Get all models with limit/offset pagination.
         :param limit: limit of dummies.
@@ -56,59 +58,62 @@ class BaseDAO(ABC):
         :param with_count: count of all records.
         :return: stream of dummies.
         """
-        model = self.get_model()
-        data = await model.all().offset(offset).limit(limit)
+        data = await cls._model.all().offset(offset).limit(limit)
         if with_count:
-            count = await model.all().count()
+            count = await cls._model.all().count()
             return data, count
 
         return data
 
+    @classmethod
     async def _get_all_with_prefetch(
-        self,
-        limit: int,
-        offset: int,
-        prefetch: str,
-        with_count=False,
-    ) -> Union[tuple[list[Model], int], list[Model]]:
-        model = self.get_model()
-        data = await model.all().offset(offset).limit(limit).prefetch_related(prefetch)
+        cls, limit: int, offset: int, prefetch: str, with_count: bool = False
+    ) -> Union[tuple[list[DAOModel], int], list[DAOModel]]:
+        data = (
+            await cls._model.all()
+            .offset(offset)
+            .limit(limit)
+            .prefetch_related(prefetch)
+        )
         if with_count:
-            count = await model.all().count()
+            count = await cls._model.all().count()
             return data, count
 
         return data
 
-    async def filter(self, data: Dict[str, Any]) -> List[models.Model]:
+    @classmethod
+    async def filter(cls, data: Dict[str, Any]) -> List[DAOModel]:
         """
         Get specific model.
         """
-        model = self.get_model()
-        query = model.all()
+        query = cls._model.all()
         query = query.filter(**data)
         return await query
 
-    async def filter_with_order(self, filter_data: Dict[str, Any], order_col_name: str):
-        model = self.get_model()
-        query = model.all().filter(**filter_data).order_by(order_col_name)
+    @classmethod
+    async def filter_with_order(
+        cls, filter_data: Dict[str, Any], order_col_name: str
+    ) -> List[DAOModel]:
+        query = cls._model.all().filter(**filter_data).order_by(order_col_name)
         return await query
 
+    @classmethod
     async def filter_with_prefetch(
-        self,
+        cls,
         data: Dict[str, Any],
         prefetch: str,
-    ) -> List[models.Model]:
+    ) -> List[DAOModel]:
         """
         Get specific model.
         """
-        model = self.get_model()
-        query = model.all().filter(**data).prefetch_related(prefetch)
+        query = cls._model.all().filter(**data).prefetch_related(prefetch)
         return await query
 
-    async def delete_by_id(self, id: int) -> Any:
-        obj = await self.get_by_id(id)
+    @classmethod
+    async def delete_by_id(cls, id_: int) -> Any:  # id_ отдельным коммитом
+        obj = await cls._model.get_by_id(id_)
         return await obj.delete()
 
-    async def exclude(self, data: Dict[str, Any]):
-        model = self.get_model()
-        return await model.exclude(**data)
+    @classmethod
+    async def exclude(cls, data: Dict[str, Any]) -> List[DAOModel]:
+        return await cls._model.exclude(**data)
