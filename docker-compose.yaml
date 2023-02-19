@@ -1,65 +1,71 @@
+version: "3.9"
+
 services:
-  efmarketplace:
+  efmarketplace_api:
     build:
       context: .
-      dockerfile: ./docker/efmarketplace/Dockerfile
+      dockerfile: Dockerfile
     restart: always
     env_file:
-      - .env
+    - .env
+    environment:
+    - POSTGRES_HOST=db
+    - POSTGRES_PORT=5432
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
-    ports:
-      - ${API_SERVER_PORT}:8000
-    environment:
-      EFMARKETPLACE_HOST: 0.0.0.0
-      POSTGRES_HOST: efmarketplace-db
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: efmarketplace
-      POSTGRES_PASSWORD: efmarketplace
-      POSTGRES_DB: efmarketplace
-      REDIS_HOST: efmarketplace-redis
-      REDIS_PORT: 6379
 
   db:
-    build:
-      context: .
-      dockerfile: ./docker/postgresql/Dockerfile
-    hostname: efmarketplace-db
+    image: postgres:13.8-bullseye
+    hostname: db
     environment:
-      POSTGRES_PASSWORD: efmarketplace
-      POSTGRES_USER: efmarketplace
-      POSTGRES_DB: efmarketplace
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE_NAME}
     volumes:
-      - efmarketplace-db-data:/var/lib/postgresql/data
+    - db-data:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: pg_isready -U efmarketplace
+      test: pg_isready -U ticket
       interval: 2s
       timeout: 3s
       retries: 40
 
+#  migrator:
+#    image: ticket:${TICKET_VERSION:-latest}
+#    restart: "no"
+#    command: aerich upgrade
+#    environment:
+#      TICKET_DB_HOST: ticket-db
+#      TICKET_DB_PORT: 5432
+#      TICKET_DB_USER: ticket
+#      TICKET_DB_PASS: ticket
+#      TICKET_DB_BASE: ticket
+#    depends_on:
+#      db:
+#        condition: service_healthy
+
   redis:
-    build:
-      context: .
-      dockerfile: ./docker/redis/Dockerfile
-    hostname: efmarketplace-redis
+    image: bitnami/redis:6.2.5
+    hostname: redis
     restart: always
     environment:
-      ALLOW_EMPTY_PASSWORD: yes
-      REDIS_PORT: 6379
+      ALLOW_EMPTY_PASSWORD: "yes"
     healthcheck:
       test: redis-cli ping
       interval: 1s
       timeout: 3s
       retries: 50
+    volumes:
+      - redis-data:/data
 
-volumes:
-  efmarketplace-db-data:
-    name: efmarketplace-db-data
 
 networks:
   default:
     driver: bridge
+
+volumes:
+  db-data:
+  redis-data:

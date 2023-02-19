@@ -1,32 +1,31 @@
 from typing import List
 
-from fastapi import APIRouter, status
-
 from efmarketplace import schemas
 from efmarketplace.services import city_service
+from fastapi import APIRouter, status
 
 __all__ = [
-    'router',
+    "router",
 ]
 
 router = APIRouter()
 
 
 @router.get(
-    '/',
+    "/",
     response_model=List[schemas.City],
     status_code=status.HTTP_200_OK,
-    description='Get all cities.',
+    description="Get all cities.",
 )
 async def read_all_cities():
     return await city_service.read_all_cities()
 
 
 @router.get(
-    '/{city_id:int}',
+    "/{city_id:int}",
     response_model=schemas.City,
     status_code=status.HTTP_200_OK,
-    description='Read specific city.',
+    description="Read specific city.",
 )
 async def read_city(
     city_id: int = schemas.CityFields.id,
@@ -37,10 +36,10 @@ async def read_city(
 
 
 @router.get(
-    '/{name:str}',
+    "/{name:str}",
     response_model=schemas.City,
     status_code=status.HTTP_200_OK,
-    description='Read specific city by name.',
+    description="Read specific city by name.",
 )
 async def read_city(
     name: str = schemas.CityFields.name,

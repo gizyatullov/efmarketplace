@@ -10,6 +10,9 @@ ignore =
   WPS305,
   ; Missing docstring in public module
   D100,
+  D103,
+  D104,
+  DAR401
   ; Missing docstring in magic method
   D105,
   ; Missing docstring in __init__
@@ -70,6 +73,7 @@ ignore =
   WPS407,
   ; Found too many empty lines in `def`
   WPS473,
+  WPS432,
 
 per-file-ignores =
   ; all tests

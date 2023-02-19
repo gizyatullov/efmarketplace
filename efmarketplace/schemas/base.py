@@ -6,10 +6,9 @@ from typing import Any, Dict, List, Tuple, Type, TypeVar
 
 import pydantic
 
-__all__ = ['BaseModel',
-           'Model']
+__all__ = ["BaseModel", "Model"]
 
-Model = TypeVar('Model', bound='BaseModel')
+Model = TypeVar("Model", bound="BaseModel")
 
 
 class BaseModel(pydantic.BaseModel):

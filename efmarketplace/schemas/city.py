@@ -1,21 +1,21 @@
+from efmarketplace.pkg.types.strings import LowerStr
 from pydantic import Field, PositiveInt
 
 from .base import BaseModel
-from efmarketplace.pkg.types.strings import LowerStr
 
 __all__ = [
-    'CityFields',
-    'City',
-    'CityWithoutCountryID',
-    'ReadCityByNameQuery',
-    'ReadCityByIdQuery',
+    "CityFields",
+    "City",
+    "CityWithoutCountryID",
+    "ReadCityByNameQuery",
+    "ReadCityByIdQuery",
 ]
 
 
 class CityFields:
-    id = Field(description='City ID', example=2)
-    name = Field(description='City name', example='dimitrovgrad')
-    country_id = Field(description='Country ID', example=2)
+    id = Field(description="City ID", example=2)
+    name = Field(description="City name", example="dimitrovgrad")
+    country_id = Field(description="Country ID", example=2)
 
 
 class BaseCity(BaseModel):

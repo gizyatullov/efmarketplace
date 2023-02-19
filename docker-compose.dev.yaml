@@ -1,29 +1,79 @@
 services:
-  api:
-    ports:
-      # Exposes application port.
-    - "8000:8000"
-    volumes:
-      # Adds current directory as volume.
-    - .:/app/src/
+  efmarketplace_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+    - .env
     environment:
-      # Enables autoreload.
-      EFMARKETPLACE_RELOAD: "True"
+    - POSTGRES_HOST=db
+    - POSTGRES_PORT=5432
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: db
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "postgres"
+    volumes:
+    - ticket-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U ticket
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    image: ticket:${TICKET_VERSION:-latest}
+    restart: "no"
+    command: aerich upgrade
+    environment:
+      TICKET_DB_HOST: ticket-db
+      TICKET_DB_PORT: 5432
+      TICKET_DB_USER: ticket
+      TICKET_DB_PASS: ticket
+      TICKET_DB_BASE: ticket
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    image: bitnami/redis:6.2.5
+    hostname: "redis"
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+    volumes:
+      - ${REDIS_DATA_VOLUME}:/data
 
   adminer:
     build:
       context: .
       dockerfile: docker/adminer/Dockerfile
-
     restart: always
-
     env_file:
       - .env
     environment:
       - PMA_HOST=db:5432
-
     depends_on:
       - db
-
     ports:
       - ${ADMINER_EXTERNAL_PORT}:8080
+
+
+networks:
+  default:
+    driver: bridge

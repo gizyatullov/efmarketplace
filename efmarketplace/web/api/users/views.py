@@ -1,59 +1,59 @@
 from typing import List
 
-from fastapi import APIRouter, status, Depends, Security
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from redis.asyncio import ConnectionPool
-from fastapi_jwt_auth import AuthJWT
-
 from efmarketplace import schemas
-from efmarketplace.services import user_service, auth_service
-from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
+from efmarketplace.services import auth_service, user_service
 from efmarketplace.services.redis.dependency import get_redis_pool
+from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
+from fastapi import APIRouter, Depends, status, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi_jwt_auth import AuthJWT
+from redis.asyncio import ConnectionPool
 
 __all__ = [
-    'router',
+    "router",
 ]
 
 router = APIRouter()
 
 
 @router.post(
-    '/',
+    "/",
     response_model=schemas.User,
     status_code=status.HTTP_201_CREATED,
-    description='Create user',
-    response_model_exclude={'password'},
+    description="Create user",
+    response_model_exclude={"password"},
 )
 async def create_user(
     cmd: schemas.CreateUserCommand,
     redis_pool: ConnectionPool = Depends(get_redis_pool),
 ):
-    # Temporarily disabled captcha for ease of development
-    # if not await auth_service.verify_captcha_in_redis(redis_pool=redis_pool,
-    #                                                   uid_captcha=cmd.uid_captcha,
-    #                                                   value_captcha=cmd.value_captcha):
-    #     raise IncorrectCaptcha
+    if not await verify_captcha_in_redis(
+        redis_pool=redis_pool,
+        uid_captcha=cmd.uid_captcha,
+        value_captcha=cmd.value_captcha,
+    ):
+        raise IncorrectCaptcha
 
     return await user_service.create_user(cmd=cmd)
 
 
 @router.get(
-    '/',
+    "/",
     response_model=List[schemas.User],
     status_code=status.HTTP_200_OK,
-    response_model_exclude={'password'},
-    description='Get all users without password field.',
+    response_model_exclude={"password"},
+    description="Get all users without password field.",
 )
 async def read_all_users():
     return await user_service.read_all_users()
 
 
 @router.get(
-    '/{user_id:int}',
+    "/{user_id:int}",
     response_model=schemas.User,
     status_code=status.HTTP_200_OK,
-    response_model_exclude={'password'},
-    description='Read specific user without password field.',
+    response_model_exclude={"password"},
+    description="Read specific user without password field.",
 )
 async def read_user(
     user_id: int = schemas.UserFields.id,
@@ -64,11 +64,11 @@ async def read_user(
 
 
 @router.get(
-    '/{username:str}',
+    "/{username:str}",
     response_model=schemas.User,
     status_code=status.HTTP_200_OK,
-    response_model_exclude={'password'},
-    description='Read specific user without password field.',
+    response_model_exclude={"password"},
+    description="Read specific user without password field.",
 )
 async def read_user(
     username: str = schemas.UserFields.username,
@@ -79,11 +79,11 @@ async def read_user(
 
 
 @router.patch(
-    '/password',
+    "/password",
     response_model=schemas.User,
     status_code=status.HTTP_202_ACCEPTED,
-    description='Change password.',
-    response_model_exclude={'password'},
+    description="Change password.",
+    response_model_exclude={"password"},
 )
 async def change_password(
     cmd: schemas.ChangeUserPasswordCommand,
@@ -92,11 +92,11 @@ async def change_password(
 
 
 @router.delete(
-    '/{user_id}',
+    "/{user_id}",
     response_model=schemas.User,
     status_code=status.HTTP_200_OK,
-    response_model_exclude={'password'},
-    description='Delete specific user',
+    response_model_exclude={"password"},
+    description="Delete specific user",
 )
 async def delete_user(
     user_id: int = schemas.UserFields.id,
@@ -107,11 +107,11 @@ async def delete_user(
 
 
 @router.patch(
-    '/user',
+    "/user",
     response_model=schemas.User,
     status_code=status.HTTP_200_OK,
-    response_model_exclude={'password'},
-    description='Update specific user without password field.',
+    response_model_exclude={"password"},
+    description="Update specific user without password field.",
 )
 async def update_user(
     cmd: schemas.UpdateUserCommand,
@@ -123,6 +123,7 @@ async def update_user(
 
 @router.post(
     '/notification',
+    response_model=schemas.Notification,
     status_code=status.HTTP_200_OK,
     description='Receiving notifications by the user.',
 )

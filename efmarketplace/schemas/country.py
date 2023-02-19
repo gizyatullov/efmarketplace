@@ -1,27 +1,27 @@
 from typing import List, Union
 
+from efmarketplace.pkg.types.strings import LowerStr
 from pydantic import Field, PositiveInt
 
-from efmarketplace.pkg.types.strings import LowerStr
 from .base import BaseModel
 from .city import CityWithoutCountryID
 
 __all__ = [
-    'CountryFields',
-    'Country',
-    'ReadCountryByNameQuery',
-    'ReadCountryByIdQuery',
-    'ReadAllCountryQuery',
-    'CountryWithCities',
+    "CountryFields",
+    "Country",
+    "ReadCountryByNameQuery",
+    "ReadCountryByIdQuery",
+    "ReadAllCountryQuery",
+    "CountryWithCities",
 ]
 
 
 class CountryFields:
-    id = Field(description='Country id.', example=2)
-    name = Field(description='Country name', example='russia')
-    with_cities = Field(description='With a list of cities?',
-                        example=True,
-                        default=False)
+    id = Field(description="Country id.", example=2)
+    name = Field(description="Country name", example="russia")
+    with_cities = Field(
+        description="With a list of cities?", example=True, default=False
+    )
 
 
 class BaseCountry(BaseModel):

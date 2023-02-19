@@ -1,1 +1,1 @@
-"""efmarketplace package."""
+"""API package."""

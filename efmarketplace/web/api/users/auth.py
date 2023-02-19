@@ -1,7 +1,7 @@
 from functools import wraps
 
-from fastapi import HTTPException
 from efmarketplace.web.api.users.controler import check_auth
+from fastapi import HTTPException
 
 
 def auth_required(func):  # type: ignore

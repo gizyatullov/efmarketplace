@@ -1,31 +1,45 @@
-from typing import List, Union
+from typing import List, Literal, Union, overload
 
-from tortoise import models
+from efmarketplace import schemas
+from efmarketplace.db import models
+from efmarketplace.schemas import ReadCityByIdQuery, ReadCityByNameQuery
 
 from .base import BaseDAO
-from efmarketplace import schemas
-from efmarketplace.db.models.city import City
 
-__all__ = ['CityDAO']
+__all__ = ["CityDAO"]
+
+Model = models.City
+Schema = schemas.City
 
 
-class CityDAO(BaseDAO):
-    def get_model(self) -> models.Model:
-        return City
+class CityDAO(BaseDAO[models.City]):
+    _model = Model
 
-    async def read(self,
-                   query: schemas.ReadCityByIdQuery,
-                   orm_obj: bool = False) -> Union[schemas.City, City]:
-        c = await City.get(id=query.id)
-        return c if orm_obj else schemas.City.from_orm(c)
+    @staticmethod
+    @overload
+    async def read(query: ReadCityByIdQuery, orm_obj: Literal[True]) -> Model:
+        ...
 
-    async def read_by_name(self,
-                           query: schemas.ReadCityByNameQuery,
-                           orm_obj: bool = False
-                           ) -> Union[schemas.City, City]:
-        c = await City.get(name=query.name)
-        return c if orm_obj else schemas.City.parse_obj(c)
+    @staticmethod
+    @overload
+    async def read(query: ReadCityByIdQuery, orm_obj: Literal[False]) -> Schema:
+        ...
 
-    async def read_all(self) -> List[schemas.City]:
-        c = await City.all()
-        return [schemas.City.from_orm(item) for item in c]
+    @staticmethod
+    async def read(
+        query: ReadCityByIdQuery, orm_obj: bool = False
+    ) -> Union[Schema, Model]:
+        c = await Model.get(id=query.id)
+        return c if orm_obj else Schema.from_orm(c)
+
+    @staticmethod
+    async def read_by_name(
+        query: ReadCityByNameQuery, orm_obj: bool = False
+    ) -> Union[Schema, Model]:
+        c = await Model.get(name=query.name)
+        return c if orm_obj else Schema.parse_obj(c)
+
+    @staticmethod
+    async def read_all() -> List[Schema]:
+        c = await Model.all()
+        return [Schema.from_orm(item) for item in c]

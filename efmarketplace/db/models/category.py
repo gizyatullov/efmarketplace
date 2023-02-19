@@ -13,5 +13,9 @@ class Category(models.Model):
 
     subcategories = fields.ReverseRelation['Subcategory']
 
+    class Meta:
+        table = "categories"
+        ordering = ["name"]
+
     def __str__(self) -> str:
-        return self.name
+        return f"Category ({self.name})"

@@ -2,15 +2,11 @@ from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
 from loguru import logger
 
-from efmarketplace.services import price_service
 from efmarketplace.settings import settings
-
-__all__ = [
-    'init_repeaters',
-]
+from efmarketplace.services import price_service
 
 
-def init_repeaters(app: FastAPI) -> None:
+def init_price_update_repeater(app: FastAPI) -> None:
     @app.on_event('startup')
     @repeat_every(seconds=60 * settings.FREQUENCY_PRICE_UPDATES_IN_MINUTES,
                   logger=logger)

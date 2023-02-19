@@ -22,7 +22,7 @@ class PriceService:
                 r = await client.get(url=f'{base_uri}{name}')
                 payload = r.json()
                 if (not r.status_code == status.HTTP_200_OK or
-                        not payload.get('price')):
+                    not payload.get('price')):
                     continue
                 units_price.append(schemas.UnitPrice(name_pair=name,
                                                      price=payload.get('price')))

@@ -15,10 +15,8 @@ __all__ = ['NotificationDAO', ]
 
 
 class NotificationDAO(BaseDAO):
-    def get_model(self) -> models.Model:
-        return Notification
-
-    async def create_for_all(self, cmd: schemas.CreateNotificationCommand
+    @staticmethod
+    async def create_for_all(cmd: schemas.CreateNotificationCommand
                              ) -> schemas.Notification:
         try:
             async with in_transaction():
@@ -31,3 +29,5 @@ class NotificationDAO(BaseDAO):
             logger.error(f"...{e}")
         else:
             return schemas.Notification.from_orm(n)
+
+    # async def read(self, ):

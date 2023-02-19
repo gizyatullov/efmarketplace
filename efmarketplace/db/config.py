@@ -3,25 +3,24 @@ from typing import List
 from efmarketplace.settings import settings
 
 MODELS_MODULES: List[str] = [
-    'aerich.models',
-    'efmarketplace.db.models.user',
-    'efmarketplace.db.models.country',
-    'efmarketplace.db.models.city',
+    "efmarketplace.db.models.user",
+    "efmarketplace.db.models.country",
+    "efmarketplace.db.models.city",
     'efmarketplace.db.models.category',
     'efmarketplace.db.models.subcategory',
     'efmarketplace.db.models.notification',
     'efmarketplace.db.models.notification_status',
-    'efmarketplace.db.models.ticket',
-]  # noqa: WPS407
+    "efmarketplace.db.models.ticket_models",
+]
 
 TORTOISE_CONFIG = {  # noqa: WPS407
-    'connections': {
-        'default': str(settings.db_url),
+    "connections": {
+        "default": str(settings.db_url),
     },
-    'apps': {
-        'models': {
-            'models': MODELS_MODULES,
-            'default_connection': 'default',
+    "apps": {
+        "models": {
+            "models": MODELS_MODULES + ["aerich.models"],
+            "default_connection": "default",
         },
     },
 }

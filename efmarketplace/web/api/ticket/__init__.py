@@ -1,4 +1,4 @@
-"""Ticket API."""
+"""Dummy model API."""
 from efmarketplace.web.api.ticket.views import router
 
-__all__ = ['router']
+__all__ = ["router"]

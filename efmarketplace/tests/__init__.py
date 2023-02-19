@@ -1,1 +1,1 @@
-"""Tests for efmarketplace."""
+"""Tests for api."""

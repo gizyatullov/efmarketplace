@@ -16,5 +16,9 @@ class Subcategory(models.Model):
         model_name='models.Category',
         related_name='subcategories')
 
+    class Meta:
+        table = 'subcategories'
+        ordering = ['name']
+
     def __str__(self) -> str:
-        return self.name
+        return f"Subcategory ({self.name})"

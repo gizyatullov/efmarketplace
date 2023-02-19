@@ -2,9 +2,11 @@ from datetime import datetime
 from types import coroutine
 from typing import List, Optional
 
-from efmarketplace.db.models.ticket import (TicketModel,
-                                            TicketResponseModel,
-                                            TicketStatus, )
+from efmarketplace.db.models.ticket_models import (
+    TicketModel,
+    TicketResponseModel,
+    TicketStatus,
+)
 from efmarketplace.web.api.ticket.schema import Ticket, TicketResponse
 
 __all__ = [
@@ -21,17 +23,17 @@ class TicketResponseDAO:
     async def create_ticket_response_model(
         self,
         user: coroutine,  # type: ignore
-        ticket_id: int,
+        id_: int,
         content: str,
     ) -> TicketResponse:  # type: ignore
         """Add single ticketresponse to table.
 
         :param user: user
-        :param ticket_id: id of ticket
+        :param id_: id of ticket
         :param content: content for ticket
         :return: ticketresponse
         """
-        ticket = await TicketModel.filter(id=ticket_id).first()
+        ticket = await TicketModel.filter(id=id_).first()
         ticket_response = await TicketResponseModel.create(
             ticket=ticket,
             created=datetime.now(),
@@ -81,13 +83,13 @@ class TicketDAO:
         return [Ticket(**dict(el)) for el in tickets]
 
     @staticmethod
-    async def filter(ticket_id: int) -> Optional[Ticket]:
+    async def filter(id_: int) -> Optional[Ticket]:
         """Get specific ticket model by id.
 
-        :param ticket_id: id of ticket
+        :param id_: id of ticket
         :return: ticked filtered by id
         """
-        ticket = await TicketModel.filter(id=ticket_id).first()
+        ticket = await TicketModel.filter(id=id_).first()
         if not ticket:
             return None
         return Ticket(**dict(ticket))

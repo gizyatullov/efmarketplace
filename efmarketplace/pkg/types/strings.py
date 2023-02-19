@@ -6,9 +6,11 @@ from pydantic import SecretStr
 from pydantic.utils import update_not_none
 from pydantic.validators import constr_length_validator
 
-__all__ = ['NotEmptySecretStr',
-           'NotEmptyStr',
-           'LowerStr', ]
+__all__ = [
+    "NotEmptySecretStr",
+    "NotEmptyStr",
+    "LowerStr",
+]
 
 
 class NotEmptySecretStr(SecretStr):
@@ -27,7 +29,7 @@ class NotEmptyStr(str):
     def __modify_schema__(cls, field_schema: Dict[str, str]) -> None:
         update_not_none(
             field_schema,
-            type='string',
+            type="string",
             writeOnly=False,
             minLength=cls.min_length,
             maxLength=cls.max_length,
@@ -50,5 +52,5 @@ class LowerStr(str):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, v) -> LowerStr:
         return cls(v.lower())

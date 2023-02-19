@@ -1,23 +1,24 @@
-from typing import List
+from typing import List, Type
 
 from efmarketplace import schemas
-from efmarketplace.db.dao import CityDAO
+from efmarketplace.db.dao.city import CityDAO
 
-__all__ = ['CityService', ]
+__all__ = [
+    "CityService",
+]
 
 
 class CityService:
-    repository: CityDAO
+    repository: Type[CityDAO]
 
-    def __init__(self, city_repository: CityDAO):
+    def __init__(self, city_repository: Type[CityDAO]):
         self.repository = city_repository
 
     async def read_all_cities(self) -> List[schemas.City]:
         return await self.repository.read_all()
 
     async def read_specific_city_by_name(
-        self,
-        query: schemas.ReadCityByNameQuery
+        self, query: schemas.ReadCityByNameQuery
     ) -> schemas.City:
         return await self.repository.read_by_name(query=query)
 

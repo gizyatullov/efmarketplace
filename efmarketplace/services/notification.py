@@ -1,15 +1,15 @@
-from typing import List, Union
+from typing import List, Union, Type
 
 from efmarketplace import schemas
-from efmarketplace.db.dao import NotificationDAO
+from efmarketplace.db.dao.notification import NotificationDAO
 
 __all__ = ['NotificationService', ]
 
 
 class NotificationService:
-    repository: NotificationDAO
+    repository: Type[NotificationDAO]
 
-    def __init__(self, notification_repository: NotificationDAO):
+    def __init__(self, notification_repository: Type[NotificationDAO]):
         self.repository = notification_repository
 
     async def create_notification_for_all(self, cmd: schemas.CreateNotificationCommand

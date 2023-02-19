@@ -21,19 +21,20 @@ Examples:
             "message": "test error."
         }
 """
+from efmarketplace.web.api.exceptions.base import BaseAPIException
+from fastapi_jwt_auth.exceptions import AuthJWTException
 from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from fastapi_jwt_auth.exceptions import AuthJWTException
 
-from efmarketplace.web.api.exceptions.base import BaseAPIException
+__all__ = [
+    "handle_internal_exception",
+    "handle_api_exceptions",
+    "authjwt_exception_handler",
+]
 
-__all__ = ['handle_internal_exception',
-           'handle_api_exceptions',
-           'authjwt_exception_handler', ]
 
-
-def handle_api_exceptions(request: Request, exc: BaseAPIException):
+def handle_api_exceptions(request: Request, exc: BaseAPIException) -> JSONResponse:
     """Handle all internal exceptions which inherited from
     `BaseAPIException`."""
     _ = request
@@ -41,7 +42,7 @@ def handle_api_exceptions(request: Request, exc: BaseAPIException):
     return JSONResponse(status_code=exc.status_code, content={"message": exc.message})
 
 
-def handle_internal_exception(request: Request, exc: Exception):
+def handle_internal_exception(request: Request, exc: Exception) -> JSONResponse:
     """Handle all internal unhandled exceptions."""
     _ = request
 
@@ -51,8 +52,5 @@ def handle_internal_exception(request: Request, exc: Exception):
     )
 
 
-def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.message}
-    )
+def authjwt_exception_handler(request: Request, exc: AuthJWTException) -> JSONResponse:
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})

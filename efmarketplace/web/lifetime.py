@@ -1,9 +1,9 @@
 from typing import Awaitable, Callable
 
+from efmarketplace.services.redis.lifetime import init_redis, shutdown_redis
 from fastapi import FastAPI
 
-from efmarketplace.services.redis.lifetime import init_redis, shutdown_redis
-from efmarketplace.services.repeat import init_repeaters
+from efmarketplace.pkg.price import init_price_update_repeater
 
 
 def register_startup_event(
@@ -13,16 +13,16 @@ def register_startup_event(
     Actions to run on application startup.
 
     This function uses fastAPI app to store data
-    in the state, such as db_engine.
+    inthe state, such as db_engine.
 
     :param app: the fastAPI application.
     :return: function that actually performs actions.
     """
 
-    @app.on_event('startup')
+    @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
         init_redis(app)
-        init_repeaters(app)
+        init_price_update_repeater(app)
 
     return _startup
 
@@ -37,7 +37,7 @@ def register_shutdown_event(
     :return: function that actually performs actions.
     """
 
-    @app.on_event('shutdown')
+    @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
         await shutdown_redis(app)
 

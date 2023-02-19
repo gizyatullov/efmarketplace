@@ -1,24 +1,25 @@
-from pydantic import Field, UUID4
-
 from efmarketplace.pkg.types import NotEmptySecretStr
-from efmarketplace.schemas import UserFields
+from efmarketplace.schemas.user import UserFields
+from pydantic import UUID4, Field
 
 from .base import BaseModel
 
-__all__ = ['Auth',
-           'AuthCommand',
-           'LogoutCommand',
-           'CaptchaQuery',
-           'Captcha',
-           'CaptchaWithoutValue', ]
+__all__ = [
+    "Auth",
+    "AuthCommand",
+    "LogoutCommand",
+    "CaptchaQuery",
+    "Captcha",
+    "CaptchaWithoutValue",
+]
 
 
 class AuthFields:
-    access_token = Field(description='Bearer access token', example='exam.ple.token')
-    refresh_token = Field(description='Bearer refresh token', example='exam.ple.token')
+    access_token = Field(description="Bearer access token", example="exam.ple.token")
+    refresh_token = Field(description="Bearer refresh token", example="exam.ple.token")
     fingerprint = Field(
-        description='Unique fingerprint of user device',
-        example='u-u-i-d',
+        description="Unique fingerprint of user device",
+        example="u-u-i-d",
     )
     role_name = UserFields.role_name
     username = UserFields.username

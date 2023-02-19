@@ -1,10 +1,10 @@
-from tortoise import models, fields
+from tortoise import fields, models
 import bcrypt
 
 from efmarketplace import schemas
 
 __all__ = [
-    'User',
+    "User",
 ]
 
 
@@ -31,14 +31,13 @@ class User(models.Model):
         ordering = ['-created']
 
     def __str__(self) -> str:
-        return f'User ({self.username}) ({self.role_name})'
+        return f"User ({self.username}) ({self.role_name})"
 
     async def set_password(self, password: str) -> None:
-        password_bytes = password.encode('utf-8')
-        self.password = bcrypt.hashpw(password_bytes,
-                                      bcrypt.gensalt()).decode('utf-8')
+        password_bytes = password.encode("utf-8")
+        self.password = bcrypt.hashpw(password_bytes, bcrypt.gensalt()).decode("utf-8")
 
     async def check_password(self, password: str) -> bool:
-        password_bytes = password.encode('utf-8')
-        hashed_bytes = self.password.encode('utf-8')
+        password_bytes = password.encode("utf-8")
+        hashed_bytes = self.password.encode("utf-8")
         return bcrypt.checkpw(password_bytes, hashed_bytes)

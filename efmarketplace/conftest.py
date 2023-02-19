@@ -2,6 +2,10 @@ from typing import Any, AsyncGenerator
 
 import nest_asyncio
 import pytest
+from efmarketplace.db.config import MODELS_MODULES, TORTOISE_CONFIG
+from efmarketplace.services.redis.dependency import get_redis_pool
+from efmarketplace.settings import settings
+from efmarketplace.web.application import get_app
 from fakeredis import FakeServer
 from fakeredis.aioredis import FakeConnection
 from fastapi import FastAPI
@@ -10,22 +14,17 @@ from redis.asyncio import ConnectionPool
 from tortoise import Tortoise
 from tortoise.contrib.test import finalizer, initializer
 
-from efmarketplace.db.config import MODELS_MODULES, TORTOISE_CONFIG
-from efmarketplace.services.redis.dependency import get_redis_pool
-from efmarketplace.settings import settings
-from efmarketplace.web.application import get_app
-
 nest_asyncio.apply()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def anyio_backend() -> str:
     """
     Backend for anyio pytest plugin.
 
     :return: backend name.
     """
-    return 'asyncio'
+    return "asyncio"
 
 
 @pytest.fixture(autouse=True)
@@ -38,7 +37,7 @@ async def initialize_db() -> AsyncGenerator[None, None]:
     initializer(
         MODELS_MODULES,
         db_url=str(settings.db_url),
-        app_label='models',
+        app_label="models",
     )
     await Tortoise.init(config=TORTOISE_CONFIG)
 
@@ -89,5 +88,5 @@ async def client(
     :param fastapi_app: the application.
     :yield: client for the app.
     """
-    async with AsyncClient(app=fastapi_app, base_url='http://127.0.0.1:5194') as ac:
+    async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
         yield ac

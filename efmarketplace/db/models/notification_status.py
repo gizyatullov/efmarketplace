@@ -19,10 +19,10 @@ class NotificationStatus(models.Model):
         related_name='statuses')
     status = fields.BooleanField(default=False)
 
-    # TODO Composite pk for user notification
     class Meta:
         table = 'notification_statuses'
         ordering = ['-status']
+        unique_together = (("user_id", "notification_id"),)
 
     def __str__(self):
         return f'NotificationStatus ({self.id})'

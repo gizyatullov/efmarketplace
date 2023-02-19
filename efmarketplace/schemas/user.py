@@ -2,104 +2,104 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import Field, PositiveInt, AnyHttpUrl
+from pydantic import AnyHttpUrl, Field, PositiveInt
 
 from .base import BaseModel
 
 __all__ = [
-    'User',
-    'UserFields',
-    'CreateUserCommand',
-    'ReadUserByIdQuery',
-    'ReadUserByUserNameQuery',
-    'UpdateUserCommand',
-    'DeleteUserCommand',
-    'ChangeUserPasswordCommand',
-    'UserRole',
+    "User",
+    "UserFields",
+    "CreateUserCommand",
+    "ReadUserByIdQuery",
+    "ReadUserByUserNameQuery",
+    "UpdateUserCommand",
+    "DeleteUserCommand",
+    "ChangeUserPasswordCommand",
+    "UserRole",
 ]
 
 
 class UserRole(Enum):
-    USER = 'user'
-    ADMIN = 'admin'
+    USER = "user"
+    ADMIN = "admin"
 
 
 class UserFields:
-    id = Field(description='User id.', example=2)
-    username = Field(description='User Login', example='TestTest')
+    id = Field(description="User id.", example=2)
+    username = Field(description="User Login", example="TestTest")
     password = Field(
-        description='User password',
-        example='strong password',
+        description="User password",
+        example="strong password",
         min_length=6,
         max_length=256,
     )
     old_password = Field(
-        description='Old user password.',
-        example='strong password',
+        description="Old user password.",
+        example="strong password",
         min_length=6,
         max_length=256,
     )
     new_password = Field(
-        description='New user password.',
-        example='strong password',
+        description="New user password.",
+        example="strong password",
         min_length=6,
         max_length=256,
     )
     role_name = Field(
-        description='User role.',
+        description="User role.",
         example=UserRole.USER.value,
     )
     is_seller = Field(
-        description='The seller ?',
+        description="The seller ?",
         example=False,
         default=None,
     )
     btc_balance = Field(
-        description='Quantity btc.',
+        description="Quantity btc.",
         example=1051.0,
         default=None,
     )
     btc_address = Field(
-        description='Address btc.',
-        example='3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy',
+        description="Address btc.",
+        example="3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
         default=None,
     )
     otp = Field(
-        description='?.',
-        example='?',
+        description="?.",
+        example="?",
         default=None,
     )
     city = Field(
-        description='User\'s city',
-        example='Ul`yanovsk',
+        description="User's city",
+        example="Ul`yanovsk",
         default=None,
     )
     avatar = Field(
-        description='URI photo user.',
-        example='https://img.desktopwallpapers.ru/animals/pics/wide/1920x1200/6369fc18cca723f6a53f8730d420e7ee.jpg',
+        description="URI photo user.",
+        example="https://img.desktopwallpapers.ru/animals/pics/wide/1920x1200/6369fc18cca723f6a53f8730d420e7ee.jpg",
         default=None,
     )
     is_banned = Field(
-        description='Banned ?',
+        description="Banned ?",
         example=False,
         default=None,
     )
     user_ban_date = Field(
-        description='If banned, until what time ?',
-        example='2023-09-21 12:00:00',
+        description="If banned, until what time ?",
+        example="2023-09-21 12:00:00",
         default=None,
     )
     created = Field(
-        description='When the user registered ?',
-        example='2022-09-21 12:00:00',
+        description="When the user registered ?",
+        example="2022-09-21 12:00:00",
     )
     uid_captcha = Field(
-        description='Unique ID captcha',
-        example='d22dee4f-44af-4b25-831a-5ba7bc75bca4',
+        description="Unique ID captcha",
+        example="d22dee4f-44af-4b25-831a-5ba7bc75bca4",
     )
     value_captcha = Field(
-        description='Value captcha',
-        example='51iu6v',
+        description="Value captcha",
+        example="51iu6v",
     )
 
 
