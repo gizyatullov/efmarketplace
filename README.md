@@ -25,14 +25,14 @@ You can read more about poetry here: https://python-poetry.org/
 You can start the project with docker using this command:
 
 ```bash
-docker-compose -f deploy/docker-compose.yaml --project-directory . up --build
+docker-compose up --build
 ```
 
-If you want to develop in docker with autoreload add `-f deploy/docker-compose.dev.yml` to your docker command.
+If you want to develop in docker with autoreload add `-f docker-compose.dev.yaml` to your docker command.
 Like this:
 
 ```bash
-docker-compose -f deploy/docker-compose.yaml -f deploy/docker-compose.dev.yaml --project-directory . up
+docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml --project-directory . up
 ```
 
 This command exposes the web application on port 8000, mounts current directory and enables autoreload.
@@ -40,7 +40,7 @@ This command exposes the web application on port 8000, mounts current directory 
 But you have to rebuild image every time you modify `poetry.lock` or `pyproject.toml` with this command:
 
 ```bash
-docker-compose -f deploy/docker-compose.yml --project-directory . build
+docker-compose -f docker-compose.yml --project-directory . build
 ```
 
 ## Project structure
@@ -112,8 +112,8 @@ You can read more about pre-commit here: https://pre-commit.com/
 If you want to run it in docker, simply run:
 
 ```bash
-docker-compose -f deploy/docker-compose.yaml --project-directory . run --rm api pytest -vv .
-docker-compose -f deploy/docker-compose.yaml --project-directory . down
+docker-compose -f docker-compose.yaml --project-directory . run --rm api pytest -vv .
+docker-compose -f docker-compose.yaml --project-directory . down
 ```
 
 For running tests on your local machine.
