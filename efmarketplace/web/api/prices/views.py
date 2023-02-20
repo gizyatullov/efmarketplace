@@ -8,17 +8,18 @@ from efmarketplace.services.redis.dependency import get_redis_pool
 router = APIRouter()
 
 __all__ = [
-    'router',
+    "router",
 ]
 
 
 @router.post(
-    '/',
-    name='price',
+    "/",
+    name="price",
     response_model=schemas.Price,
     status_code=status.HTTP_200_OK,
-    description='Get currency prices.',
+    description="Get currency prices.",
 )
 async def read_price(redis_pool: ConnectionPool = Depends(get_redis_pool)):
-    return await price_service.read_price(query=schemas.ReadPriceQuery(),
-                                          redis_pool=redis_pool)
+    return await price_service.read_price(
+        query=schemas.ReadPriceQuery(), redis_pool=redis_pool
+    )

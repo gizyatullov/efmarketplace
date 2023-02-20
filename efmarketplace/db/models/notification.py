@@ -1,7 +1,7 @@
 from tortoise import models, fields
 
 __all__ = [
-    'Notification',
+    "Notification",
 ]
 
 
@@ -13,11 +13,11 @@ class Notification(models.Model):
     text = fields.TextField()
     created = fields.DatetimeField(auto_now_add=True)
 
-    statuses = fields.ReverseRelation['NotificationStatus']
+    statuses = fields.ReverseRelation["NotificationStatus"]
 
     class Meta:
-        table = 'notifications'
-        ordering = ['-created']
+        table = "notifications"
+        ordering = ["-created"]
 
     def __str__(self):
-        return f'Notification ({self.name})'
+        return f"Notification ({self.name})"

@@ -8,45 +8,45 @@ from .base import BaseModel
 from .user import UserFields
 
 __all__ = [
-    'NotificationFields',
-    'NotificationStatusFields',
-    'NotificationStatus',
-    'Notification',
-    'CreateNotificationCommand',
+    "NotificationFields",
+    "NotificationStatusFields",
+    "NotificationStatus",
+    "Notification",
+    "CreateNotificationCommand",
     "MarkAsReadNotificationCommand",
     "MarkAsReadNotificationWithUserUIDCommand",
-    'ReadNotificationQuery',
-    'ReadNotificationWithUserUIDQuery',
-    'StatusReceivedNotification',
+    "ReadNotificationQuery",
+    "ReadNotificationWithUserUIDQuery",
+    "StatusReceivedNotification",
 ]
 
 
 class StatusReceivedNotification(Enum):
-    ANY = 'any'
-    NOT_READ = 'not read'
-    READ = 'read'
+    ANY = "any"
+    NOT_READ = "not read"
+    READ = "read"
 
 
 class NotificationFields:
-    id = Field(description='Notification ID', example=2)
-    name = Field(description='Notification name, title', example='all for packing')
-    sender = Field(description='Sender name', example='administration')
-    whom = Field(description='What kind of notification ?',
-                 example='alerts to everyone')
-    text = Field(description='Text notification', example='text notification')
-    created = Field(description='Creation time', example='2023-02-17 15:18:01')
-    view = Field(description='Viewed Notifications ?', example=False)
-    uid_notifications = Field(description='Mark notifications as read by the user',
-                              example=[1, 51, 94])
+    id = Field(description="Notification ID", example=2)
+    name = Field(description="Notification name, title", example="all for packing")
+    sender = Field(description="Sender name", example="administration")
+    whom = Field(
+        description="What kind of notification ?", example="alerts to everyone"
+    )
+    text = Field(description="Text notification", example="text notification")
+    created = Field(description="Creation time", example="2023-02-17 15:18:01")
+    view = Field(description="Viewed Notifications ?", example=False)
+    uid_notifications = Field(
+        description="Mark notifications as read by the user", example=[1, 51, 94]
+    )
 
 
 class NotificationStatusFields:
-    id = Field(description='Notification status ID', example=2)
-    user_id = Field(description='Recipient ID', example=2)
-    notification_id = Field(description='Notification ID', example=2)
-    status = Field(description='Status notification',
-                   example=False,
-                   default=False)
+    id = Field(description="Notification status ID", example=2)
+    user_id = Field(description="Recipient ID", example=2)
+    notification_id = Field(description="Notification ID", example=2)
+    status = Field(description="Status notification", example=False, default=False)
 
 
 class BaseNotificationStatus(BaseModel):
@@ -90,13 +90,15 @@ class CreateNotificationCommand(BaseNotification):
 
 class MarkAsReadNotificationCommand(BaseNotification):
     uid_notifications: List[
-        Union[PositiveInt, str]] = NotificationFields.uid_notifications
+        Union[PositiveInt, str]
+    ] = NotificationFields.uid_notifications
 
 
 class MarkAsReadNotificationWithUserUIDCommand(BaseNotification):
     user_uid: Union[PositiveInt, str] = UserFields.id
     uid_notifications: List[
-        Union[PositiveInt, str]] = NotificationFields.uid_notifications
+        Union[PositiveInt, str]
+    ] = NotificationFields.uid_notifications
 
 
 # Query

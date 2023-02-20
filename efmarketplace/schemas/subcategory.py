@@ -4,18 +4,18 @@ from .base import BaseModel
 from efmarketplace.pkg.types import NotEmptyStr, LowerStr
 
 __all__ = [
-    'SubcategoryFields',
-    'Subcategory',
-    'CreateSubcategoryCommand',
-    'ReadSubcategoryByNameQuery',
-    'ReadSubcategoryByIdQuery',
+    "SubcategoryFields",
+    "Subcategory",
+    "CreateSubcategoryCommand",
+    "ReadSubcategoryByNameQuery",
+    "ReadSubcategoryByIdQuery",
 ]
 
 
 class SubcategoryFields:
-    id = Field(description='Subcategory ID', example=2)
-    name = Field(description='Subcategory name', example='smartphones')
-    category_id = Field(description='Category ID', example=1)
+    id = Field(description="Subcategory ID", example=2)
+    name = Field(description="Subcategory name", example="smartphones")
+    category_id = Field(description="Category ID", example=1)
 
 
 class BaseSubcategory(BaseModel):

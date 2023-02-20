@@ -55,12 +55,14 @@ async def auth_user(
     user_claims = {"uid": user.id}
 
     access_token = Authorize.create_access_token(
-        subject=user.username, expires_time=access_token_expires,
-        user_claims=user_claims
+        subject=user.username,
+        expires_time=access_token_expires,
+        user_claims=user_claims,
     )
     refresh_token = Authorize.create_refresh_token(
-        subject=user.username, expires_time=refresh_token_expires,
-        user_claims=user_claims
+        subject=user.username,
+        expires_time=refresh_token_expires,
+        user_claims=user_claims,
     )
     return schemas.Auth(access_token=access_token, refresh_token=refresh_token)
 
@@ -78,12 +80,12 @@ async def create_new_token_pair(
     current_user = Authorize.get_jwt_subject()
     user_claims = {"uid": Authorize.get_raw_jwt()["uid"]}
     access_token = Authorize.create_access_token(
-        subject=current_user, expires_time=access_token_expires,
-        user_claims=user_claims
+        subject=current_user, expires_time=access_token_expires, user_claims=user_claims
     )
     refresh_token = Authorize.create_refresh_token(
-        subject=current_user, expires_time=refresh_token_expires,
-        user_claims=user_claims
+        subject=current_user,
+        expires_time=refresh_token_expires,
+        user_claims=user_claims,
     )
     return schemas.Auth(access_token=access_token, refresh_token=refresh_token)
 
@@ -108,5 +110,6 @@ async def get_me(
 async def captcha(
     redis_pool: ConnectionPool = Depends(get_redis_pool),
 ):
-    return await auth_service.create_captcha(_cmd=schemas.CaptchaQuery(),
-                                             redis_pool=redis_pool)
+    return await auth_service.create_captcha(
+        _cmd=schemas.CaptchaQuery(), redis_pool=redis_pool
+    )

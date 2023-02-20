@@ -24,11 +24,11 @@ class User(models.Model):
     is_banned = fields.BooleanField(default=False)
     user_ban_date = fields.DatetimeField(null=True)
 
-    notification_statuses = fields.ReverseRelation['NotificationStatus']
+    notification_statuses = fields.ReverseRelation["NotificationStatus"]
 
     class Meta:
-        table = 'users'
-        ordering = ['-created']
+        table = "users"
+        ordering = ["-created"]
 
     def __str__(self) -> str:
         return f"User ({self.username}) ({self.role_name})"

@@ -135,8 +135,7 @@ async def get_notification(
 ):
     authorize.jwt_required()
     query = schemas.ReadNotificationWithUserUIDQuery(
-        user_uid=authorize.get_raw_jwt()["uid"],
-        view=query.view
+        user_uid=authorize.get_raw_jwt()["uid"], view=query.view
     )
     return await notification_service.read_user_notifications(query=query)
 
@@ -155,6 +154,6 @@ async def mark_as_read(
     authorize.jwt_required()
     query = schemas.MarkAsReadNotificationWithUserUIDCommand(
         user_uid=authorize.get_raw_jwt()["uid"],
-        uid_notifications=query.uid_notifications
+        uid_notifications=query.uid_notifications,
     )
     return await notification_service.mark_as_read(query=query)

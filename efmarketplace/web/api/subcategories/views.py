@@ -6,17 +6,17 @@ from efmarketplace import schemas
 from efmarketplace.services import subcategory_service
 
 __all__ = [
-    'router',
+    "router",
 ]
 
 router = APIRouter()
 
 
 @router.post(
-    '/',
+    "/",
     response_model=schemas.Subcategory,
     status_code=status.HTTP_201_CREATED,
-    description='Create subcategory',
+    description="Create subcategory",
 )
 async def create_subcategory(
     cmd: schemas.CreateSubcategoryCommand,
@@ -25,20 +25,20 @@ async def create_subcategory(
 
 
 @router.get(
-    '/',
+    "/",
     response_model=List[schemas.Subcategory],
     status_code=status.HTTP_200_OK,
-    description='Get all subcategories.',
+    description="Get all subcategories.",
 )
 async def read_all_subcategories():
     return await subcategory_service.read_all_subcategories()
 
 
 @router.get(
-    '/{subcategory_id:int}',
+    "/{subcategory_id:int}",
     response_model=schemas.Subcategory,
     status_code=status.HTTP_200_OK,
-    description='Read specific subcategory by id.',
+    description="Read specific subcategory by id.",
 )
 async def read_subcategory(
     subcategory_id: int = schemas.SubcategoryFields.id,
@@ -49,10 +49,10 @@ async def read_subcategory(
 
 
 @router.get(
-    '/{name:str}',
+    "/{name:str}",
     response_model=schemas.Subcategory,
     status_code=status.HTTP_200_OK,
-    description='Read specific subcategory by name.',
+    description="Read specific subcategory by name.",
 )
 async def read_subcategory(
     name: str = schemas.SubcategoryFields.name,

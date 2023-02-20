@@ -4,17 +4,17 @@ from .base import BaseModel
 from efmarketplace.pkg.types import NotEmptyStr, LowerStr
 
 __all__ = [
-    'CategoryFields',
-    'Category',
-    'CreateCategoryCommand',
-    'ReadCategoryByNameQuery',
-    'ReadCategoryByIdQuery',
+    "CategoryFields",
+    "Category",
+    "CreateCategoryCommand",
+    "ReadCategoryByNameQuery",
+    "ReadCategoryByIdQuery",
 ]
 
 
 class CategoryFields:
-    id = Field(description='Category ID', example=2)
-    name = Field(description='Category name', example='non-food')
+    id = Field(description="Category ID", example=2)
+    name = Field(description="Category name", example="non-food")
 
 
 class BaseCategory(BaseModel):
