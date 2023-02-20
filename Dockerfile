@@ -24,7 +24,7 @@ RUN apt-get purge -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Copying actuall application
-COPY . /app/src/
+COPY . /usr/src/app/
 RUN poetry install
 
 CMD ["/usr/local/bin/python", "-m", "efmarketplace"]

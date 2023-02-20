@@ -50,8 +50,10 @@ class Settings(_Settings):
     WORKERS_COUNT: PositiveInt = 1
     # Enable uvicorn reloading.
     UVICORN_RELOAD: bool = True
-
-    log_level: LogLevel = LogLevel.INFO
+    # At what level to start logging ?
+    LOG_LEVEL: LogLevel = LogLevel.INFO
+    # After how many minutes to update quotes from binance ?
+    FREQUENCY_PRICE_UPDATES: PositiveInt = 5
 
     # PostgreSQL host.
     POSTGRES_HOST: str
@@ -62,7 +64,7 @@ class Settings(_Settings):
     # PostgreSQL password.
     POSTGRES_PASSWORD: SecretStr
     # PostgreSQL database name.
-    POSTGRES_DATABASE_NAME: str
+    POSTGRES_DB: str
 
     # Secret key for creating and verifying tokens
     JWT_SECRET_KEY: SecretStr = "..."
@@ -100,7 +102,7 @@ class Settings(_Settings):
             port=self.POSTGRES_PORT,
             user=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD.get_secret_value(),
-            path=f"/{self.POSTGRES_DATABASE_NAME}",
+            path=f"/{self.POSTGRES_DB}",
         )
 
     @property

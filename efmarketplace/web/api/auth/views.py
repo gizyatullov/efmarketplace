@@ -100,7 +100,7 @@ async def get_me(
     description="Captcha.",
 )
 async def captcha(
-    cmd: schemas.CaptchaQuery,
     redis_pool: ConnectionPool = Depends(get_redis_pool),
 ):
-    return await auth_service.create_captcha(cmd=cmd, redis_pool=redis_pool)
+    return await auth_service.create_captcha(_cmd=schemas.CaptchaQuery(),
+                                             redis_pool=redis_pool)

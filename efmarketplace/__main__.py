@@ -10,7 +10,7 @@ def main() -> None:
         host=settings.HOST,
         port=settings.PORT,
         reload=settings.UVICORN_RELOAD,
-        log_level=settings.log_level.value.lower(),
+        log_level=settings.LOG_LEVEL.value.lower(),
         factory=True,
     )
 

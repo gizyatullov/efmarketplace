@@ -1,13 +1,14 @@
 from typing import List
 
-from efmarketplace import schemas
-from efmarketplace.services import auth_service, user_service
-from efmarketplace.services.redis.dependency import get_redis_pool
-from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 from fastapi import APIRouter, Depends, status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi_jwt_auth import AuthJWT
 from redis.asyncio import ConnectionPool
+
+from efmarketplace import schemas
+from efmarketplace.services import auth_service, user_service
+from efmarketplace.services.redis.dependency import get_redis_pool
+from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 
 __all__ = [
     "router",
@@ -27,7 +28,7 @@ async def create_user(
     cmd: schemas.CreateUserCommand,
     redis_pool: ConnectionPool = Depends(get_redis_pool),
 ):
-    if not await verify_captcha_in_redis(
+    if not await auth_service.verify_captcha_in_redis(
         redis_pool=redis_pool,
         uid_captcha=cmd.uid_captcha,
         value_captcha=cmd.value_captcha,
@@ -123,7 +124,7 @@ async def update_user(
 
 @router.post(
     '/notification',
-    response_model=schemas.Notification,
+    # response_model=schemas.Notification,
     status_code=status.HTTP_200_OK,
     description='Receiving notifications by the user.',
 )

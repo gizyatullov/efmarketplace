@@ -1,5 +1,11 @@
 from pathlib import Path
 
+from fastapi import FastAPI
+from fastapi.responses import UJSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi_jwt_auth.exceptions import AuthJWTException
+from tortoise.contrib.fastapi import register_tortoise
+
 from efmarketplace.db.config import TORTOISE_CONFIG
 from efmarketplace.logging_ import configure_logging
 from efmarketplace.settings import settings
@@ -10,11 +16,6 @@ from efmarketplace.web.handle_http_exceptions import (
     handle_api_exceptions,
 )
 from efmarketplace.web.lifetime import register_shutdown_event, register_startup_event
-from fastapi import FastAPI
-from fastapi.responses import UJSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi_jwt_auth.exceptions import AuthJWTException
-from tortoise.contrib.fastapi import register_tortoise
 
 APP_ROOT = Path(__file__).parent.parent
 

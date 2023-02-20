@@ -7,10 +7,18 @@ services:
       dockerfile: Dockerfile
     restart: always
     env_file:
-    - .env
+      - .env
     environment:
-    - POSTGRES_HOST=db
-    - POSTGRES_PORT=5432
+      - HOST=0.0.0.0
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=efmarketplace
+      - POSTGRES_PASSWORD=efmarketplace
+      - POSTGRES_DB=efmarketplace
+      - REDIS_HOST=efmarketplace-redis
+      - REDIS_PORT=6379
+    ports:
+      - ${PORT}:${PORT}
     depends_on:
       db:
         condition: service_healthy
@@ -21,38 +29,39 @@ services:
     image: postgres:13.8-bullseye
     hostname: db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DATABASE_NAME}
+      POSTGRES_USER: efmarketplace
+      POSTGRES_PASSWORD: efmarketplace
+      POSTGRES_DB: efmarketplace
     volumes:
-    - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: pg_isready -U ticket
+      test: pg_isready -U efmarketplace
       interval: 2s
       timeout: 3s
       retries: 40
 
-#  migrator:
-#    image: ticket:${TICKET_VERSION:-latest}
-#    restart: "no"
-#    command: aerich upgrade
-#    environment:
-#      TICKET_DB_HOST: ticket-db
-#      TICKET_DB_PORT: 5432
-#      TICKET_DB_USER: ticket
-#      TICKET_DB_PASS: ticket
-#      TICKET_DB_BASE: ticket
-#    depends_on:
-#      db:
-#        condition: service_healthy
+  #  migrator:
+  #    image: ticket:${TICKET_VERSION:-latest}
+  #    restart: "no"
+  #    command: aerich upgrade
+  #    environment:
+  #      TICKET_DB_HOST: ticket-db
+  #      TICKET_DB_PORT: 5432
+  #      TICKET_DB_USER: ticket
+  #      TICKET_DB_PASS: ticket
+  #      TICKET_DB_BASE: ticket
+  #    depends_on:
+  #      db:
+  #        condition: service_healthy
 
   redis:
     image: bitnami/redis:6.2.5
-    hostname: redis
+    hostname: efmarketplace-redis
     restart: always
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
+      REDIS_PORT: 6379
     healthcheck:
       test: redis-cli ping
       interval: 1s
@@ -68,4 +77,5 @@ networks:
 
 volumes:
   db-data:
+    name: efmarketplace-db-data
   redis-data:
