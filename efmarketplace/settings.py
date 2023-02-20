@@ -73,6 +73,8 @@ class Settings(_Settings):
     # Refresh token validity time in days
     REFRESH_TOKEN_EXPIRES: PositiveInt = 30
 
+    # Enable or disable
+    CAPTCHA_VERIFY: bool = True
     # The storage time of the uid-value captcha in redis in seconds
     CAPTCHA_TTL: PositiveInt = 3600
     # The number of characters issued in the captcha

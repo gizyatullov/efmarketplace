@@ -52,12 +52,15 @@ async def auth_user(
         raise IncorrectCaptcha
 
     user = await auth_service.check_user_password(cmd=cmd)
+    user_claims = {"uid": user.id}
 
     access_token = Authorize.create_access_token(
-        subject=user.username, expires_time=access_token_expires
+        subject=user.username, expires_time=access_token_expires,
+        user_claims=user_claims
     )
     refresh_token = Authorize.create_refresh_token(
-        subject=user.username, expires_time=refresh_token_expires
+        subject=user.username, expires_time=refresh_token_expires,
+        user_claims=user_claims
     )
     return schemas.Auth(access_token=access_token, refresh_token=refresh_token)
 
@@ -73,11 +76,14 @@ async def create_new_token_pair(
 ):
     Authorize.jwt_refresh_token_required()
     current_user = Authorize.get_jwt_subject()
+    user_claims = {"uid": Authorize.get_raw_jwt()["uid"]}
     access_token = Authorize.create_access_token(
-        subject=current_user, expires_time=access_token_expires
+        subject=current_user, expires_time=access_token_expires,
+        user_claims=user_claims
     )
     refresh_token = Authorize.create_refresh_token(
-        subject=current_user, expires_time=refresh_token_expires
+        subject=current_user, expires_time=refresh_token_expires,
+        user_claims=user_claims
     )
     return schemas.Auth(access_token=access_token, refresh_token=refresh_token)
 

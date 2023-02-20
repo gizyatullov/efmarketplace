@@ -6,7 +6,7 @@ from fastapi_jwt_auth import AuthJWT
 from redis.asyncio import ConnectionPool
 
 from efmarketplace import schemas
-from efmarketplace.services import auth_service, user_service
+from efmarketplace.services import auth_service, user_service, notification_service
 from efmarketplace.services.redis.dependency import get_redis_pool
 from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 
@@ -124,14 +124,18 @@ async def update_user(
 
 @router.post(
     '/notification',
-    # response_model=schemas.Notification,
+    response_model=List[schemas.Notification],
     status_code=status.HTTP_200_OK,
-    description='Receiving notifications by the user.',
+    description="Receiving notifications by the user.",
 )
 async def get_notification(
-    cmd: schemas.ReadNotificationQuery,
+    query: schemas.ReadNotificationQuery,
     authorize: AuthJWT = Depends(),
     credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
     authorize.jwt_required()
-    return authorize.get_jwt_subject()
+    query = schemas.ReadNotificationWithUserUIDQuery(
+        user_uid=authorize.get_raw_jwt()["uid"],
+        view=query.view
+    )
+    return await notification_service.read_user_notifications(query=query)

@@ -1,6 +1,7 @@
 from typing import List, Union
 
 from tortoise import models
+from tortoise.exceptions import OperationalError
 from tortoise.transactions import in_transaction
 from loguru import logger
 
@@ -9,7 +10,6 @@ from efmarketplace import schemas
 from efmarketplace.db.models.notification import Notification
 from efmarketplace.db.models.notification_status import NotificationStatus
 from efmarketplace.db.models.user import User
-from tortoise.exceptions import OperationalError
 
 __all__ = ['NotificationDAO', ]
 
@@ -30,4 +30,22 @@ class NotificationDAO(BaseDAO):
         else:
             return schemas.Notification.from_orm(n)
 
-    # async def read(self, ):
+    @staticmethod
+    async def read(query: schemas.ReadNotificationWithUserUIDQuery
+                   ) -> List[schemas.Notification]:
+        statuses = await NotificationStatus.filter(user_id=query.user_uid,
+                                                   status=query.view
+                                                   ).select_related("notification")
+        result = []
+        for item in statuses:
+            n = schemas.Notification(
+                id=item.notification_id,
+                name=item.notification.name,
+                sender=item.notification.sender,
+                whom=item.notification.whom,
+                text=item.notification.text,
+                status=item.status,
+                created=item.notification.created
+            )
+            result.append(n)
+        return result

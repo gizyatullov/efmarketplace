@@ -53,6 +53,9 @@ class AuthService:
     async def verify_captcha_in_redis(
         redis_pool: ConnectionPool, uid_captcha: str, value_captcha: str
     ) -> bool:
+        if not settings.CAPTCHA_VERIFY:
+            return True
+
         async with Redis(connection_pool=redis_pool) as redis:
             v: bytes = await redis.get(name=f"captcha_{uid_captcha}")
 

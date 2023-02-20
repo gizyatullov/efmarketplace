@@ -14,7 +14,7 @@ __all__ = [
     'Notification',
     'CreateNotificationCommand',
     'ReadNotificationQuery',
-    'ReadNotificationWithUserQuery',
+    'ReadNotificationWithUserUIDQuery',
     'StatusReceivedNotification',
 ]
 
@@ -33,8 +33,7 @@ class NotificationFields:
                  example='alerts to everyone')
     text = Field(description='Text notification', example='text notification')
     created = Field(description='Creation time', example='2023-02-17 15:18:01')
-    which = Field(description='What is the status of notifications ?',
-                  example=StatusReceivedNotification.ANY.value)
+    view = Field(description='Viewed Notifications ?', example=False)
 
 
 class NotificationStatusFields:
@@ -73,6 +72,7 @@ class Notification(BaseNotification):
     sender: str = NotificationFields.sender
     whom: str = NotificationFields.whom
     text: str = NotificationFields.text
+    status: bool = NotificationStatusFields.status
     created: datetime = NotificationFields.created
 
 
@@ -86,9 +86,9 @@ class CreateNotificationCommand(BaseNotification):
 
 # Query
 class ReadNotificationQuery(BaseNotification):
-    which: StatusReceivedNotification = NotificationFields.which
+    view: bool = NotificationFields.view
 
 
-class ReadNotificationWithUserQuery(BaseNotification):
+class ReadNotificationWithUserUIDQuery(BaseNotification):
     user_uid: Union[PositiveInt, str] = UserFields.id
-    which: StatusReceivedNotification = NotificationFields.which
+    view: bool = NotificationFields.view
