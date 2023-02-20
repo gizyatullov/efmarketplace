@@ -123,7 +123,7 @@ async def update_user(
 
 
 @router.post(
-    '/notification',
+    "/notification",
     response_model=List[schemas.Notification],
     status_code=status.HTTP_200_OK,
     description="Receiving notifications by the user.",
@@ -139,3 +139,22 @@ async def get_notification(
         view=query.view
     )
     return await notification_service.read_user_notifications(query=query)
+
+
+@router.patch(
+    "/notification",
+    # response_model=List[schemas.Notification],
+    status_code=status.HTTP_202_ACCEPTED,
+    description="Mark notifications as read by the user.",
+)
+async def mark_as_read(
+    query: schemas.MarkAsReadNotificationCommand,
+    authorize: AuthJWT = Depends(),
+    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
+):
+    authorize.jwt_required()
+    query = schemas.MarkAsReadNotificationWithUserUIDCommand(
+        user_uid=authorize.get_raw_jwt()["uid"],
+        uid_notifications=query.uid_notifications
+    )
+    return await notification_service.mark_as_read(query=query)

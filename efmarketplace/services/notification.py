@@ -20,3 +20,7 @@ class NotificationService:
                                       query: schemas.ReadNotificationWithUserUIDQuery
                                       ) -> List[schemas.Notification]:
         return await self.repository.read(query=query)
+
+    async def mark_as_read(self,
+                           query: schemas.MarkAsReadNotificationWithUserUIDCommand):
+        return await self.repository.mark_as_read(query=query)

@@ -11,7 +11,7 @@ from efmarketplace.db.models.notification import Notification
 from efmarketplace.db.models.notification_status import NotificationStatus
 from efmarketplace.db.models.user import User
 
-__all__ = ['NotificationDAO', ]
+__all__ = ["NotificationDAO", ]
 
 
 class NotificationDAO(BaseDAO):
@@ -31,11 +31,8 @@ class NotificationDAO(BaseDAO):
             return schemas.Notification.from_orm(n)
 
     @staticmethod
-    async def read(query: schemas.ReadNotificationWithUserUIDQuery
-                   ) -> List[schemas.Notification]:
-        statuses = await NotificationStatus.filter(user_id=query.user_uid,
-                                                   status=query.view
-                                                   ).select_related("notification")
+    async def orm_notification_status_in_pydantic(statuses: List[NotificationStatus]
+                                                  ) -> List[schemas.Notification]:
         result = []
         for item in statuses:
             n = schemas.Notification(
@@ -48,4 +45,31 @@ class NotificationDAO(BaseDAO):
                 created=item.notification.created
             )
             result.append(n)
+        return result
+
+    @staticmethod
+    async def read(query: schemas.ReadNotificationWithUserUIDQuery
+                   ) -> List[schemas.Notification]:
+        statuses = await NotificationStatus.filter(user_id=query.user_uid,
+                                                   status=query.view
+                                                   ).select_related("notification")
+        result = await NotificationDAO.orm_notification_status_in_pydantic(
+            statuses=statuses
+        )
+        return result
+
+    @staticmethod
+    async def mark_as_read(query: schemas.MarkAsReadNotificationWithUserUIDCommand
+                           ) -> List[schemas.Notification]:
+        n = await NotificationStatus.filter(user_id=query.user_uid,
+                                            notification_id__in=query.uid_notifications
+                                            ).update(status=True)
+
+        statuses = await NotificationStatus.filter(user_id=query.user_uid,
+                                                   notification_id__in=query.uid_notifications
+                                                   ).select_related("notification")
+
+        result = await NotificationDAO.orm_notification_status_in_pydantic(
+            statuses=statuses
+        )
         return result

@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 from datetime import datetime
 from enum import Enum
 
@@ -13,6 +13,8 @@ __all__ = [
     'NotificationStatus',
     'Notification',
     'CreateNotificationCommand',
+    "MarkAsReadNotificationCommand",
+    "MarkAsReadNotificationWithUserUIDCommand",
     'ReadNotificationQuery',
     'ReadNotificationWithUserUIDQuery',
     'StatusReceivedNotification',
@@ -34,6 +36,8 @@ class NotificationFields:
     text = Field(description='Text notification', example='text notification')
     created = Field(description='Creation time', example='2023-02-17 15:18:01')
     view = Field(description='Viewed Notifications ?', example=False)
+    uid_notifications = Field(description='Mark notifications as read by the user',
+                              example=[1, 51, 94])
 
 
 class NotificationStatusFields:
@@ -82,6 +86,17 @@ class CreateNotificationCommand(BaseNotification):
     sender: str = NotificationFields.sender
     whom: str = NotificationFields.whom
     text: str = NotificationFields.text
+
+
+class MarkAsReadNotificationCommand(BaseNotification):
+    uid_notifications: List[
+        Union[PositiveInt, str]] = NotificationFields.uid_notifications
+
+
+class MarkAsReadNotificationWithUserUIDCommand(BaseNotification):
+    user_uid: Union[PositiveInt, str] = UserFields.id
+    uid_notifications: List[
+        Union[PositiveInt, str]] = NotificationFields.uid_notifications
 
 
 # Query
