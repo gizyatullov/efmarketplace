@@ -13,7 +13,7 @@ class Country(models.Model):
 
     class Meta:
         table = "countries"
-        ordering = ["name"]
+        ordering = ["-name"]
 
     def __str__(self) -> str:
         return self.name

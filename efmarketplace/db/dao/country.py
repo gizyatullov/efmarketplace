@@ -1,7 +1,5 @@
 from typing import List, Literal, Union, overload
 
-from tortoise.contrib.pydantic import pydantic_queryset_creator
-
 from efmarketplace import schemas
 from efmarketplace.db import models
 from efmarketplace.schemas import (
@@ -17,6 +15,7 @@ __all__ = ["CountryDAO"]
 Model = models.Country
 Schema = schemas.Country
 SchemaWithCities = schemas.CountryWithCities
+SchemaCityWithoutCountryID = schemas.CityWithoutCountryID
 
 
 class CountryDAO(BaseDAO[Model]):
@@ -39,13 +38,12 @@ class CountryDAO(BaseDAO[Model]):
         query: ReadCountryByIdQuery, orm_obj: bool = False
     ) -> Union[SchemaWithCities, Schema, Model]:
         if query.with_cities:
-            q = Model.filter(id=query.id).prefetch_related()
+            c = await Model.get(id=query.id).prefetch_related("cities")
             if orm_obj:
-                return await q.first()
-            country_pydantic = pydantic_queryset_creator(Model)
-            q = await country_pydantic.from_queryset(q)
-            q = q.dict()["__root__"][0]
-            return SchemaWithCities.parse_obj(q)
+                return c
+            obj = dict(c)
+            obj["cities"] = list(c.cities)
+            return SchemaWithCities.parse_obj(obj)
 
         c = await Model.get(id=query.id)
         return c if orm_obj else Schema.from_orm(c)
@@ -69,13 +67,12 @@ class CountryDAO(BaseDAO[Model]):
         query: ReadCountryByNameQuery, orm_obj: bool = False
     ) -> Union[SchemaWithCities, Schema, Model]:
         if query.with_cities:
-            q = Model.filter(name=query.name).prefetch_related()
+            c = await Model.get(name=query.name).prefetch_related("cities")
             if orm_obj:
-                return await q.first()
-            country_pydantic = pydantic_queryset_creator(Model)
-            q = await country_pydantic.from_queryset(q)
-            q = q.dict()["__root__"][0]
-            return SchemaWithCities.parse_obj(q)
+                return c
+            obj = dict(c)
+            obj["cities"] = list(c.cities)
+            return SchemaWithCities.parse_obj(obj)
 
         c = await Model.get(name=query.name)
         return c if orm_obj else Schema.from_orm(c)
@@ -85,11 +82,15 @@ class CountryDAO(BaseDAO[Model]):
         query: ReadAllCountryQuery,
     ) -> Union[List[Schema], List[SchemaWithCities]]:
         if query.with_cities:
-            q = Model.all().prefetch_related()
-            country_pydantic = pydantic_queryset_creator(Model)
-            q = await country_pydantic.from_queryset(queryset=q)
-            q = q.dict()["__root__"]
-            return [SchemaWithCities.parse_obj(item) for item in q]
+            c = await Model.all().prefetch_related("cities")
+            result = []
+            for item in c:
+                el = SchemaWithCities.parse_obj(item)
+                el.cities = [
+                    SchemaCityWithoutCountryID.from_orm(city) for city in item.cities
+                ]
+                result.append(el)
+            return result
 
-        q = await Model.all()
-        return [Schema.from_orm(item) for item in q]
+        c = await Model.all()
+        return [Schema.from_orm(item) for item in c]

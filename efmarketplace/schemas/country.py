@@ -38,7 +38,7 @@ class Country(BaseCountry):
 
 
 class CountryWithCities(Country):
-    cities: Union[List[CityWithoutCountryID], List] = []
+    cities: List[CityWithoutCountryID] = []
 
 
 # Query
