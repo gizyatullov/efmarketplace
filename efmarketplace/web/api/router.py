@@ -1,18 +1,19 @@
+from fastapi.routing import APIRouter
+
 from efmarketplace.web.api import (
+    admin_notification,
     auth,
+    categories,
     cities,
     countries,
-    categories,
-    subcategories,
-    prices,
     docs,
     echo,
     monitoring,
+    prices,
+    subcategories,
     ticket,
     users,
-    admin_notification,
 )
-from fastapi.routing import APIRouter
 
 api_router = APIRouter()
 api_router.include_router(monitoring.router)

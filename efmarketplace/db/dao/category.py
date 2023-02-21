@@ -2,9 +2,10 @@ from typing import List, Union
 
 from tortoise import models
 
-from .base import BaseDAO
 from efmarketplace import schemas
 from efmarketplace.db.models.category import Category
+
+from .base import BaseDAO
 
 __all__ = [
     "CategoryDAO",

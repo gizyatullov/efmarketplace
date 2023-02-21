@@ -1,9 +1,9 @@
 from typing import Awaitable, Callable
 
-from efmarketplace.services.redis.lifetime import init_redis, shutdown_redis
 from fastapi import FastAPI
 
 from efmarketplace.pkg.price import init_price_update_repeater
+from efmarketplace.services.redis.lifetime import init_redis, shutdown_redis
 
 
 def register_startup_event(

@@ -1,8 +1,9 @@
 from typing import List, Union
 
-from .base import BaseDAO
 from efmarketplace import schemas
 from efmarketplace.db.models.subcategory import Subcategory
+
+from .base import BaseDAO
 
 __all__ = [
     "SubcategoryDAO",

@@ -4,8 +4,8 @@ import string
 from typing import List
 from uuid import uuid4
 
-from redis.asyncio import ConnectionPool, Redis
 from captcha.image import ImageCaptcha
+from redis.asyncio import ConnectionPool, Redis
 
 from efmarketplace import schemas
 from efmarketplace.pkg.types.strings import NotEmptyStr

@@ -1,8 +1,9 @@
 import datetime
 
-from efmarketplace.db.models.ticket_models import TicketResponseModel, TicketStatus
 from pydantic import BaseModel
 from tortoise.contrib.pydantic import pydantic_model_creator
+
+from efmarketplace.db.models.ticket_models import TicketResponseModel, TicketStatus
 
 
 class TicketCreate(BaseModel):

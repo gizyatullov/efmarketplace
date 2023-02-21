@@ -1,12 +1,12 @@
 from typing import Dict, List
 
+import httpx
 from fastapi import status
 from redis.asyncio import ConnectionPool, Redis
-import httpx
 
 from efmarketplace import schemas
-from efmarketplace.web.api.exceptions.price import ServiceIsUnavailable
 from efmarketplace.settings import settings
+from efmarketplace.web.api.exceptions.price import ServiceIsUnavailable
 
 __all__ = [
     "PriceService",

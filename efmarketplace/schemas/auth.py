@@ -1,6 +1,7 @@
+from pydantic import UUID4, Field
+
 from efmarketplace.pkg.types import NotEmptySecretStr
 from efmarketplace.schemas.user import UserFields
-from pydantic import UUID4, Field
 
 from .base import BaseModel
 

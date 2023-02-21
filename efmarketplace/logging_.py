@@ -2,8 +2,9 @@ import logging
 import sys
 from typing import Union
 
-from efmarketplace.settings import settings
 from loguru import logger
+
+from efmarketplace.settings import settings
 
 
 class InterceptHandler(logging.Handler):

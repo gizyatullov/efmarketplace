@@ -1,10 +1,11 @@
 import uuid
 
 import pytest
-from efmarketplace.db.dao.dummy_dao import DummyDAO
 from fastapi import FastAPI
 from httpx import AsyncClient
 from starlette import status
+
+from efmarketplace.db.dao.dummy_dao import DummyDAO
 
 
 @pytest.mark.anyio

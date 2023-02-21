@@ -1,5 +1,5 @@
-from tortoise import fields, models
 import bcrypt
+from tortoise import fields, models
 
 from efmarketplace import schemas
 
@@ -10,7 +10,7 @@ __all__ = [
 
 class User(models.Model):
     id = fields.IntField(pk=True)
-    username = fields.CharField(max_length=255, unique=True)
+    username = fields.CharField(max_length=255, unique=True, index=True)
     password = fields.CharField(max_length=255)
     role_name = fields.CharEnumField(enum_type=schemas.UserRole)
     is_seller = fields.BooleanField(default=False)

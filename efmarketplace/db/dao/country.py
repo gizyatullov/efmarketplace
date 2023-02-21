@@ -1,5 +1,7 @@
 from typing import List, Literal, Union, overload
 
+from tortoise.contrib.pydantic import pydantic_queryset_creator
+
 from efmarketplace import schemas
 from efmarketplace.db import models
 from efmarketplace.schemas import (
@@ -7,7 +9,6 @@ from efmarketplace.schemas import (
     ReadCountryByIdQuery,
     ReadCountryByNameQuery,
 )
-from tortoise.contrib.pydantic import pydantic_queryset_creator
 
 from .base import BaseDAO
 

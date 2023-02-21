@@ -1,5 +1,6 @@
-from efmarketplace.db.models.user import User
 from tortoise import Optional
+
+from efmarketplace.db.models.user import User
 
 
 async def check_auth() -> Optional[User]:

@@ -1,8 +1,9 @@
-from efmarketplace.services.redis.dependency import get_redis_pool
-from efmarketplace.web.api.redis.schema import RedisValueDTO
 from fastapi import APIRouter
 from fastapi.param_functions import Depends
 from redis.asyncio import ConnectionPool, Redis
+
+from efmarketplace.services.redis.dependency import get_redis_pool
+from efmarketplace.web.api.redis.schema import RedisValueDTO
 
 router = APIRouter()
 

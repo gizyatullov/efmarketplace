@@ -1,4 +1,4 @@
-from typing import List, Union, Type
+from typing import List, Type, Union
 
 from efmarketplace import schemas
 from efmarketplace.db.dao.country import CountryDAO

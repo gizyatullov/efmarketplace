@@ -77,6 +77,11 @@ class UserDAO(BaseDAO[Model]):
         return Schema.from_orm(u)
 
     @staticmethod
+    async def read_by_username_select_fields(username: str, fields: List[str]) -> Model:
+        u = await Model.get(username=username).only(*fields)
+        return u
+
+    @staticmethod
     async def read_all() -> List[Schema]:
         u = await Model.all()
         result = [Schema.from_orm(item) for item in u]

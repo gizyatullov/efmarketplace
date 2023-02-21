@@ -1,6 +1,6 @@
-from typing import Union, List
+from typing import List, Union
 
-from pydantic import Field, PositiveInt, PositiveFloat
+from pydantic import Field, PositiveFloat, PositiveInt
 
 from .base import BaseModel
 

@@ -1,8 +1,9 @@
 from typing import List, Union
 
+from fastapi import APIRouter, status
+
 from efmarketplace import schemas
 from efmarketplace.services import country_service
-from fastapi import APIRouter, status
 
 __all__ = [
     "router",

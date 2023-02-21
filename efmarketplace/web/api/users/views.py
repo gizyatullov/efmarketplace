@@ -1,12 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, status, Security
+from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi_jwt_auth import AuthJWT
 from redis.asyncio import ConnectionPool
 
 from efmarketplace import schemas
-from efmarketplace.services import auth_service, user_service, notification_service
+from efmarketplace.services import auth_service, notification_service, user_service
 from efmarketplace.services.redis.dependency import get_redis_pool
 from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 

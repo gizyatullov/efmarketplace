@@ -1,11 +1,10 @@
 from datetime import timedelta
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi_jwt_auth import AuthJWT
 from redis.asyncio import ConnectionPool
-from pydantic import BaseModel
 
 from efmarketplace import schemas
 from efmarketplace.services import auth_service
@@ -13,24 +12,15 @@ from efmarketplace.services.redis.dependency import get_redis_pool
 from efmarketplace.settings import settings
 from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 
+
 router = APIRouter()
 
 __all__ = [
     "router",
 ]
 
-
-class SettingsAuthJWT(BaseModel):
-    authjwt_secret_key: str = settings.JWT_SECRET_KEY.get_secret_value()
-
-
 access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRES)
 refresh_token_expires = timedelta(days=settings.REFRESH_TOKEN_EXPIRES)
-
-
-@AuthJWT.load_config
-def get_config() -> SettingsAuthJWT:
-    return SettingsAuthJWT()
 
 
 @router.post(
@@ -41,7 +31,7 @@ def get_config() -> SettingsAuthJWT:
 )
 async def auth_user(
     cmd: schemas.AuthCommand,
-    Authorize: AuthJWT = Depends(),
+    authorize: AuthJWT = Depends(),
     redis_pool: ConnectionPool = Depends(get_redis_pool),
 ):
     if not await auth_service.verify_captcha_in_redis(
@@ -54,12 +44,12 @@ async def auth_user(
     user = await auth_service.check_user_password(cmd=cmd)
     user_claims = {"uid": user.id}
 
-    access_token = Authorize.create_access_token(
+    access_token = authorize.create_access_token(
         subject=user.username,
         expires_time=access_token_expires,
         user_claims=user_claims,
     )
-    refresh_token = Authorize.create_refresh_token(
+    refresh_token = authorize.create_refresh_token(
         subject=user.username,
         expires_time=refresh_token_expires,
         user_claims=user_claims,
@@ -73,16 +63,16 @@ async def auth_user(
     description="Get new tokens pair.",
 )
 async def create_new_token_pair(
-    Authorize: AuthJWT = Depends(),
+    authorize: AuthJWT = Depends(),
     credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
-    Authorize.jwt_refresh_token_required()
-    current_user = Authorize.get_jwt_subject()
-    user_claims = {"uid": Authorize.get_raw_jwt()["uid"]}
-    access_token = Authorize.create_access_token(
+    authorize.jwt_refresh_token_required()
+    current_user = authorize.get_jwt_subject()
+    user_claims = {"uid": authorize.get_raw_jwt()["uid"]}
+    access_token = authorize.create_access_token(
         subject=current_user, expires_time=access_token_expires, user_claims=user_claims
     )
-    refresh_token = Authorize.create_refresh_token(
+    refresh_token = authorize.create_refresh_token(
         subject=current_user,
         expires_time=refresh_token_expires,
         user_claims=user_claims,
@@ -94,11 +84,11 @@ async def create_new_token_pair(
     "/me",
 )
 async def get_me(
-    Authorize: AuthJWT = Depends(),
+    authorize: AuthJWT = Depends(),
     credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ) -> Optional[Dict[str, Union[str, int, bool]]]:
-    Authorize.jwt_required()
-    return Authorize.get_raw_jwt()
+    authorize.jwt_required()
+    return authorize.get_raw_jwt()
 
 
 @router.post(

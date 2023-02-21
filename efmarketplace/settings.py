@@ -7,6 +7,7 @@ from dotenv import find_dotenv
 from pydantic import BaseSettings
 from pydantic.types import PositiveInt, SecretStr
 from yarl import URL
+from fastapi_jwt_auth import AuthJWT
 
 TEMP_DIR = Path(gettempdir())
 __all__ = ["settings", "Settings"]
@@ -131,3 +132,12 @@ def get_settings(env_file: str = ".env") -> Settings:
 
 
 settings = Settings()
+
+
+class SettingsAuthJWT(BaseSettings):
+    authjwt_secret_key: str = settings.JWT_SECRET_KEY.get_secret_value()
+
+
+@AuthJWT.load_config
+def get_config() -> SettingsAuthJWT:
+    return SettingsAuthJWT()

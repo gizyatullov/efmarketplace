@@ -1,7 +1,8 @@
 from enum import Enum
 
-from efmarketplace.db.models.user import User
 from tortoise import ForeignKeyFieldInstance, fields, models
+
+from efmarketplace.db.models.user import User
 
 
 class TicketStatus(Enum):

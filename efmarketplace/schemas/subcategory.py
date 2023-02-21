@@ -1,7 +1,8 @@
 from pydantic import Field, PositiveInt
 
+from efmarketplace.pkg.types import LowerStr, NotEmptyStr
+
 from .base import BaseModel
-from efmarketplace.pkg.types import NotEmptyStr, LowerStr
 
 __all__ = [
     "SubcategoryFields",

@@ -1,7 +1,8 @@
 from typing import List, Union
 
-from efmarketplace.pkg.types.strings import LowerStr
 from pydantic import Field, PositiveInt
+
+from efmarketplace.pkg.types.strings import LowerStr
 
 from .base import BaseModel
 from .city import CityWithoutCountryID

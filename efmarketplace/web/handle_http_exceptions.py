@@ -21,11 +21,12 @@ Examples:
             "message": "test error."
         }
 """
-from efmarketplace.web.api.exceptions.base import BaseAPIException
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+
+from efmarketplace.web.api.exceptions.base import BaseAPIException
 
 __all__ = [
     "handle_internal_exception",

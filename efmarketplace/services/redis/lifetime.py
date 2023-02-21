@@ -1,6 +1,7 @@
-from efmarketplace.settings import settings
 from fastapi import FastAPI
 from redis.asyncio import ConnectionPool
+
+from efmarketplace.settings import settings
 
 
 def init_redis(app: FastAPI) -> None:  # pragma: no cover

@@ -2,10 +2,6 @@ from typing import Any, AsyncGenerator
 
 import nest_asyncio
 import pytest
-from efmarketplace.db.config import MODELS_MODULES, TORTOISE_CONFIG
-from efmarketplace.services.redis.dependency import get_redis_pool
-from efmarketplace.settings import settings
-from efmarketplace.web.application import get_app
 from fakeredis import FakeServer
 from fakeredis.aioredis import FakeConnection
 from fastapi import FastAPI
@@ -13,6 +9,11 @@ from httpx import AsyncClient
 from redis.asyncio import ConnectionPool
 from tortoise import Tortoise
 from tortoise.contrib.test import finalizer, initializer
+
+from efmarketplace.db.config import MODELS_MODULES, TORTOISE_CONFIG
+from efmarketplace.services.redis.dependency import get_redis_pool
+from efmarketplace.settings import settings
+from efmarketplace.web.application import get_app
 
 nest_asyncio.apply()
 

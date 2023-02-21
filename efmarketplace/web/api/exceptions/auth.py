@@ -6,6 +6,7 @@ __all__ = [
     "IncorrectLengthFingerprint",
     "IncorrectUsernameOrPassword",
     "IncorrectCaptcha",
+    "NotEnoughRightsFor",
 ]
 
 
@@ -22,3 +23,8 @@ class IncorrectUsernameOrPassword(BaseAPIException):
 class IncorrectCaptcha(BaseAPIException):
     status_code = status.HTTP_406_NOT_ACCEPTABLE
     message = "Incorrect value captcha or timeout has expired."
+
+
+class NotEnoughRightsFor(BaseAPIException):
+    status_code = status.HTTP_403_FORBIDDEN
+    message = "Insufficient permissions for your user role"

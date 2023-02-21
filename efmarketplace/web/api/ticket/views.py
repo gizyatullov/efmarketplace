@@ -1,5 +1,8 @@
 from typing import List
 
+from fastapi import APIRouter, HTTPException
+from fastapi.param_functions import Depends
+
 from efmarketplace.db.dao.ticket import TicketDAO, TicketResponseDAO
 from efmarketplace.web.api.ticket.schema import (
     Ticket,
@@ -9,8 +12,6 @@ from efmarketplace.web.api.ticket.schema import (
 )
 from efmarketplace.web.api.users.auth import auth_required
 from efmarketplace.web.api.users.controler import check_auth
-from fastapi import APIRouter, HTTPException
-from fastapi.param_functions import Depends
 
 router = APIRouter()
 

@@ -1,8 +1,9 @@
 from typing import Optional, Union
 
-from efmarketplace.pkg.types.strings import NotEmptyStr
 from fastapi import HTTPException
 from starlette import status
+
+from efmarketplace.pkg.types.strings import NotEmptyStr
 
 __all__ = ["BaseAPIException"]
 

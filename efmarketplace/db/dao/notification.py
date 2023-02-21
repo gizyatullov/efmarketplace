@@ -1,15 +1,16 @@
 from typing import List, Union
 
+from loguru import logger
 from tortoise import models
 from tortoise.exceptions import OperationalError
 from tortoise.transactions import in_transaction
-from loguru import logger
 
-from .base import BaseDAO
 from efmarketplace import schemas
 from efmarketplace.db.models.notification import Notification
 from efmarketplace.db.models.notification_status import NotificationStatus
 from efmarketplace.db.models.user import User
+
+from .base import BaseDAO
 
 __all__ = [
     "NotificationDAO",

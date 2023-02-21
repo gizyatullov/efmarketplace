@@ -1,5 +1,6 @@
-from efmarketplace.web.api.echo.schema import Message
 from fastapi import APIRouter
+
+from efmarketplace.web.api.echo.schema import Message
 
 router = APIRouter()
 
