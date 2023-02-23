@@ -13,6 +13,7 @@ __all__ = [
     "NotificationStatus",
     "Notification",
     "CreateNotificationCommand",
+    "CreateNotificationSpecificUsersCommand",
     "MarkAsReadNotificationCommand",
     "MarkAsReadNotificationWithUserUIDCommand",
     "ReadNotificationQuery",
@@ -76,12 +77,19 @@ class Notification(BaseNotification):
     sender: str = NotificationFields.sender
     whom: str = NotificationFields.whom
     text: str = NotificationFields.text
-    status: bool = NotificationStatusFields.status
     created: datetime = NotificationFields.created
 
 
 # Commands.
 class CreateNotificationCommand(BaseNotification):
+    name: str = NotificationFields.name
+    sender: str = NotificationFields.sender
+    whom: str = NotificationFields.whom
+    text: str = NotificationFields.text
+
+
+class CreateNotificationSpecificUsersCommand(BaseNotification):
+    user_ids: List[Union[PositiveInt, str]] = UserFields.ids
     name: str = NotificationFields.name
     sender: str = NotificationFields.sender
     whom: str = NotificationFields.whom

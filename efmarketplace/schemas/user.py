@@ -26,6 +26,7 @@ class UserRole(Enum):
 
 class UserFields:
     id = Field(description="User id.", example=2)
+    ids = Field(description="User ids.", example=[2, 4, 50])
     username = Field(description="User Login", example="TestTest")
     password = Field(
         description="User password",

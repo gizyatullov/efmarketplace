@@ -1,13 +1,13 @@
-from typing import List, Union
+from typing import List
 
 from loguru import logger
-from tortoise import models
 from tortoise.exceptions import OperationalError
 from tortoise.transactions import in_transaction
 
 from efmarketplace import schemas
 from efmarketplace.db.models.notification import Notification
 from efmarketplace.db.models.notification_status import NotificationStatus
+from efmarketplace.web.api.exceptions.notification import InvalidIDsInRequest
 from efmarketplace.db.models.user import User
 
 from .base import BaseDAO
@@ -33,6 +33,23 @@ class NotificationDAO(BaseDAO):
                 ]
         except OperationalError as e:
             logger.error(f"...{e}")
+        else:
+            return schemas.Notification.from_orm(n)
+
+    @staticmethod
+    async def create_for_specific_users(
+        cmd: schemas.CreateNotificationSpecificUsersCommand,
+    ) -> schemas.Notification:
+        try:
+            async with in_transaction():
+                n = Notification(**cmd.dict())
+                await n.save()
+                [
+                    await NotificationStatus(user_id=id_, notification_id=n.id).save()
+                    for id_ in cmd.user_ids
+                ]
+        except OperationalError:
+            raise InvalidIDsInRequest
         else:
             return schemas.Notification.from_orm(n)
 

@@ -1,7 +1,6 @@
 from fastapi.routing import APIRouter
 
 from efmarketplace.web.api import (
-    admin_notification,
     auth,
     categories,
     cities,
@@ -13,6 +12,9 @@ from efmarketplace.web.api import (
     subcategories,
     ticket,
     users,
+)
+from efmarketplace.web.api.admin_ import (
+    notification as admin_notification,
 )
 
 api_router = APIRouter()

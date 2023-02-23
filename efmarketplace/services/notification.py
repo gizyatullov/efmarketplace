@@ -19,6 +19,11 @@ class NotificationService:
     ) -> schemas.Notification:
         return await self.repository.create_for_all(cmd=cmd)
 
+    async def create_for_specific_users(
+        self, cmd: schemas.CreateNotificationSpecificUsersCommand
+    ) -> schemas.Notification:
+        return await self.repository.create_for_specific_users(cmd=cmd)
+
     async def read_user_notifications(
         self, query: schemas.ReadNotificationWithUserUIDQuery
     ) -> List[schemas.Notification]:
