@@ -1,24 +1,17 @@
 FROM python:3.9.6-slim-buster
 
-RUN pip install poetry
+RUN pip install poetry==1.3.2
 # Configuring poetry
 RUN poetry config virtualenvs.create false
 
 COPY poetry.lock pyproject.toml /usr/src/app/
-COPY pyproject.toml /usr/src/app/
 
 WORKDIR /usr/src/app/
 
 # Installing requirements
-RUN poetry install
+RUN poetry install --only main --no-interaction --no-ansi
 
-# Removing gcc
-RUN apt-get purge -y \
-  gcc \
-  && rm -rf /var/lib/apt/lists/*
-
-# Copying actuall application
+# Copying actually application
 COPY . /usr/src/app/
-RUN poetry install
 
 CMD ["/usr/local/bin/python", "-m", "efmarketplace"]
