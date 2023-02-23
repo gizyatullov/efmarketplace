@@ -7,8 +7,8 @@ from tortoise.transactions import in_transaction
 from efmarketplace import schemas
 from efmarketplace.db.models.notification import Notification
 from efmarketplace.db.models.notification_status import NotificationStatus
-from efmarketplace.web.api.exceptions.notification import InvalidIDsInRequest
 from efmarketplace.db.models.user import User
+from efmarketplace.web.api.exceptions.notification import InvalidIDsInRequest
 
 from .base import BaseDAO
 

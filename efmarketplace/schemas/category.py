@@ -8,6 +8,7 @@ __all__ = [
     "CategoryFields",
     "Category",
     "CreateCategoryCommand",
+    "ReadAllCategoryQuery",
     "ReadCategoryByNameQuery",
     "ReadCategoryByIdQuery",
 ]
@@ -36,6 +37,11 @@ class CreateCategoryCommand(BaseCategory):
 
 
 # Query
+class ReadAllCategoryQuery(BaseCategory):
+    limit: PositiveInt = 10
+    offset: int = 0
+
+
 class ReadCategoryByNameQuery(BaseCategory):
     name: LowerStr = CategoryFields.name
 

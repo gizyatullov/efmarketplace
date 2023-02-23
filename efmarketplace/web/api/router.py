@@ -13,9 +13,7 @@ from efmarketplace.web.api import (
     ticket,
     users,
 )
-from efmarketplace.web.api.admin_ import (
-    notification as admin_notification,
-)
+from efmarketplace.web.api.admin_ import notification as admin_notification
 
 api_router = APIRouter()
 api_router.include_router(monitoring.router)

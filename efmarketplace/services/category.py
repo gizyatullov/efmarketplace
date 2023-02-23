@@ -19,8 +19,10 @@ class CategoryService:
     ) -> schemas.Category:
         return await self.repository.create(cmd=cmd)
 
-    async def read_all_categories(self) -> List[schemas.Category]:
-        return await self.repository.read_all()
+    async def read_all_categories(
+        self, query: schemas.ReadAllCategoryQuery
+    ) -> List[schemas.Category]:
+        return await self.repository.read_all(query=query)
 
     async def read_specific_category_by_name(
         self, query: schemas.ReadCategoryByNameQuery

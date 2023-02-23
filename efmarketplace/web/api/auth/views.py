@@ -12,7 +12,6 @@ from efmarketplace.services.redis.dependency import get_redis_pool
 from efmarketplace.settings import settings
 from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 
-
 router = APIRouter()
 
 __all__ = [

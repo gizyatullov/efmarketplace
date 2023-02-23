@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  efmarketplace_api:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
@@ -41,19 +41,19 @@ services:
       timeout: 3s
       retries: 40
 
-  #  migrator:
-  #    image: ticket:${TICKET_VERSION:-latest}
-  #    restart: "no"
-  #    command: aerich upgrade
-  #    environment:
-  #      TICKET_DB_HOST: ticket-db
-  #      TICKET_DB_PORT: 5432
-  #      TICKET_DB_USER: ticket
-  #      TICKET_DB_PASS: ticket
-  #      TICKET_DB_BASE: ticket
-  #    depends_on:
-  #      db:
-  #        condition: service_healthy
+    migrator:
+      image: ticket:${TICKET_VERSION:-latest}
+      restart: "no"
+      command: aerich upgrade
+      environment:
+        TICKET_DB_HOST: ticket-db
+        TICKET_DB_PORT: 5432
+        TICKET_DB_USER: ticket
+        TICKET_DB_PASS: ticket
+        TICKET_DB_BASE: ticket
+      depends_on:
+        db:
+          condition: service_healthy
 
   redis:
     image: bitnami/redis:6.2.5

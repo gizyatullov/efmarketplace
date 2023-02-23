@@ -3,8 +3,8 @@ from typing import List, Optional, Type
 from fastapi import Depends
 from fastapi_jwt_auth import AuthJWT
 
-from efmarketplace.db.dao.user import UserDAO
 from efmarketplace import schemas
+from efmarketplace.db.dao.user import UserDAO
 from efmarketplace.web.api.exceptions.auth import NotEnoughRightsFor
 
 __all__ = [

@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, status
+from pydantic import PositiveInt
 
 from efmarketplace import schemas
 from efmarketplace.services import category_service
@@ -30,8 +31,12 @@ async def create_category(
     status_code=status.HTTP_200_OK,
     description="Get all categories.",
 )
-async def read_all_categories():
-    return await category_service.read_all_categories()
+async def read_all_categories(
+    limit: PositiveInt = 10,
+    offset: int = 0,
+):
+    query = schemas.ReadAllCategoryQuery(limit=limit, offset=offset)
+    return await category_service.read_all_categories(query=query)
 
 
 @router.get(

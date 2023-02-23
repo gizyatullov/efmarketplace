@@ -34,6 +34,6 @@ class CategoryDAO(BaseDAO):
         return c if orm_obj else schemas.Category.from_orm(c)
 
     @staticmethod
-    async def read_all() -> List[schemas.Category]:
-        c = await Category.all()
+    async def read_all(query: schemas.ReadAllCategoryQuery) -> List[schemas.Category]:
+        c = await Category.all().limit(query.limit).filter(id__gt=query.offset)
         return [schemas.Category.from_orm(item) for item in c]

@@ -4,10 +4,10 @@ from pathlib import Path
 from tempfile import gettempdir
 
 from dotenv import find_dotenv
+from fastapi_jwt_auth import AuthJWT
 from pydantic import BaseSettings
 from pydantic.types import PositiveInt, SecretStr
 from yarl import URL
-from fastapi_jwt_auth import AuthJWT
 
 TEMP_DIR = Path(gettempdir())
 __all__ = ["settings", "Settings"]
