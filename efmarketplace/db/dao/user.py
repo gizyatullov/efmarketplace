@@ -72,9 +72,7 @@ class UserDAO(BaseDAO[Model]):
         query: ReadUserByUserNameQuery, orm_obj: bool = False
     ) -> Union[Schema, Model]:
         u = await Model.get(username=query.username)
-        if orm_obj:
-            return u
-        return Schema.from_orm(u)
+        return u if orm_obj else Schema.from_orm(u)
 
     @staticmethod
     async def read_by_username_select_fields(username: str, fields: List[str]) -> Model:

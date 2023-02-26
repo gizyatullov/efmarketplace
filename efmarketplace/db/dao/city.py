@@ -37,7 +37,7 @@ class CityDAO(BaseDAO[models.City]):
         query: ReadCityByNameQuery, orm_obj: bool = False
     ) -> Union[Schema, Model]:
         c = await Model.get(name=query.name)
-        return c if orm_obj else Schema.parse_obj(c)
+        return c if orm_obj else Schema.from_orm(c)
 
     @staticmethod
     async def read_all() -> List[Schema]:

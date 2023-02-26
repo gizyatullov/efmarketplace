@@ -7,4 +7,5 @@ from .country import *
 from .notification import *
 from .price import *
 from .subcategory import *
+from .ticket import *
 from .user import *

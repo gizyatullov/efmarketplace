@@ -24,13 +24,12 @@ class NotificationDAO(BaseDAO):
     ) -> schemas.Notification:
         try:
             async with in_transaction():
-                n = Notification(**cmd.dict())
-                await n.save()
-                users = await User.all()
-                [
-                    await NotificationStatus(user_id=u.id, notification_id=n.id).save()
-                    for u in users
-                ]
+                n = await Notification.create(**cmd.dict())
+                user_ids = await User.all().only("id")
+                await NotificationStatus.bulk_create(objects=[
+                    NotificationStatus(user_id=u.id, notification_id=n.id)
+                    for u in user_ids
+                ])
         except OperationalError as e:
             logger.error(f"...{e}")
         else:
@@ -42,12 +41,11 @@ class NotificationDAO(BaseDAO):
     ) -> schemas.Notification:
         try:
             async with in_transaction():
-                n = Notification(**cmd.dict())
-                await n.save()
-                [
-                    await NotificationStatus(user_id=id_, notification_id=n.id).save()
+                n = await Notification.create(**cmd.dict())
+                await NotificationStatus.bulk_create(objects=[
+                    NotificationStatus(user_id=id_, notification_id=n.id)
                     for id_ in cmd.user_ids
-                ]
+                ])
         except OperationalError:
             raise InvalidIDsInRequest
         else:
@@ -77,7 +75,7 @@ class NotificationDAO(BaseDAO):
     ) -> List[schemas.Notification]:
         statuses = await NotificationStatus.filter(
             user_id=query.user_uid, status=query.view
-        ).select_related("notification")
+        ).prefetch_related("notification")
         result = await NotificationDAO.orm_notification_status_in_pydantic(
             statuses=statuses
         )
@@ -87,13 +85,13 @@ class NotificationDAO(BaseDAO):
     async def mark_as_read(
         query: schemas.MarkAsReadNotificationWithUserUIDCommand,
     ) -> List[schemas.Notification]:
-        n = await NotificationStatus.filter(
+        await NotificationStatus.filter(
             user_id=query.user_uid, notification_id__in=query.uid_notifications
-        ).update(status=True)
+        ).select_for_update().update(status=True)
 
         statuses = await NotificationStatus.filter(
             user_id=query.user_uid, notification_id__in=query.uid_notifications
-        ).select_related("notification")
+        ).prefetch_related("notification")
 
         result = await NotificationDAO.orm_notification_status_in_pydantic(
             statuses=statuses

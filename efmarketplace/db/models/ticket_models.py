@@ -1,16 +1,7 @@
-from enum import Enum
-
 from tortoise import ForeignKeyFieldInstance, fields, models
 
 from efmarketplace.db.models.user import User
-
-
-class TicketStatus(Enum):
-    """Status for TicketModel status field."""
-
-    NEW = "new"
-    ACTIVE = "active"
-    CLOSED = "closed"
+from efmarketplace.schemas.ticket import TicketStatus
 
 
 class TicketModel(models.Model):
@@ -43,7 +34,7 @@ class TicketResponseModel(models.Model):
         "models.TicketModel",
         related_name="ticket_response",
     )
-    created = fields.DatetimeField()
+    created = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "ticket_responses"

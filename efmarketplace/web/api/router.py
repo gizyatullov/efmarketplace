@@ -24,7 +24,7 @@ api_router.include_router(
     subcategories.router, prefix="/subcategory", tags=["Subcategory"]
 )
 api_router.include_router(prices.router, prefix="/price", tags=["Price"])
-api_router.include_router(ticket.router, prefix="", tags=["ticket"])
+api_router.include_router(ticket.router, prefix="/ticket", tags=["Ticket"])
 api_router.include_router(
     admin_notification.router, prefix="/admin-notification", tags=["Admin-Notification"]
 )

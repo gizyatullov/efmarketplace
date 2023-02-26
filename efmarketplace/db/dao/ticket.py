@@ -1,98 +1,43 @@
-from datetime import datetime
-from types import coroutine
 from typing import List, Optional
 
-from efmarketplace.db.models.ticket_models import (
-    TicketModel,
-    TicketResponseModel,
-    TicketStatus,
-)
-from efmarketplace.web.api.ticket.schema import Ticket, TicketResponse
+from efmarketplace import schemas
+from efmarketplace.db.models.ticket_models import TicketModel, TicketResponseModel
+from efmarketplace.web.api import exceptions
 
 __all__ = [
     "TicketResponseDAO",
-    "ticket_response_repository",
     "TicketDAO",
-    "ticket_repository",
 ]
 
 
 class TicketResponseDAO:
     """Class for accessing ticketresponse table."""
 
-    async def create_ticket_response_model(
-        self,
-        user: coroutine,  # type: ignore
-        id_: int,
-        content: str,
-    ) -> TicketResponse:  # type: ignore
-        """Add single ticketresponse to table.
-
-        :param user: user
-        :param id_: id of ticket
-        :param content: content for ticket
-        :return: ticketresponse
-        """
-        ticket = await TicketModel.filter(id=id_).first()
-        ticket_response = await TicketResponseModel.create(
-            ticket=ticket,
-            created=datetime.now(),
-            sender=user,
-            content=content,
-        )
-        return await TicketResponse.from_tortoise_orm(ticket_response)
-
-
-ticket_response_repository = TicketResponseDAO()
+    @staticmethod
+    async def create(
+        cmd: schemas.CreateTicketResponseWithUserIDCommand,
+    ) -> schemas.TicketResponse:
+        if not await TicketModel.exists(id=cmd.ticket_id):
+            raise exceptions.NotFound(
+                message=f"Not found ticket with ID {cmd.ticket_id}")
+        ticket_response = await TicketResponseModel.create(**cmd.dict())
+        return schemas.TicketResponse.from_orm(ticket_response)
 
 
 class TicketDAO:
     """Class for accessing ticket table."""
 
-    async def create_ticket_model(
-        self,
-        user: coroutine,  # type: ignore
-        tag: str,
-        content: str,
-    ) -> Ticket:
-        """
-        Add single ticket to table.
-
-        :param user: user
-        :param tag: tag for ticket
-        :param content: content for ticket
-        :return: ticket
-        """
-        ticket = await TicketModel.create(
-            status=TicketStatus.NEW,
-            created=datetime.now(),
-            sender=user,
-            tag=tag,
-            content=content,
-        )
-        return Ticket(**dict(ticket))
-
-    async def get_all_tickets(self, limit: int, offset: int) -> List[Ticket]:
-        """Get all ticket models with limit/offset pagination.
-
-        :param limit: limit of ticket objects, defaults to 10.
-        :param offset: offset of ticket objects, defaults to 0.
-        :return: list of tickets
-        """
-        tickets = await TicketModel.all().offset(offset).limit(limit)
-        return [Ticket(**dict(el)) for el in tickets]
+    @staticmethod
+    async def create(cmd: schemas.CreateTicketWithUserIDCommand) -> schemas.Ticket:
+        t = await TicketModel.create(**cmd.dict())
+        return schemas.Ticket.from_orm(t)
 
     @staticmethod
-    async def filter(id_: int) -> Optional[Ticket]:
-        """Get specific ticket model by id.
+    async def get_all_tickets(limit: int, offset: int) -> List[schemas.Ticket]:
+        t = await TicketModel.all().offset(offset).limit(limit)
+        return [schemas.Ticket.from_orm(item) for item in t]
 
-        :param id_: id of ticket
-        :return: ticked filtered by id
-        """
-        ticket = await TicketModel.filter(id=id_).first()
-        if not ticket:
-            return None
-        return Ticket(**dict(ticket))
-
-
-ticket_repository = TicketDAO()
+    @staticmethod
+    async def read_by_id(id_: int) -> Optional[schemas.Ticket]:
+        t = await TicketModel.get(id=id_)
+        return schemas.Ticket.from_orm(t)

@@ -15,8 +15,7 @@ __all__ = [
 class CategoryDAO(BaseDAO):
     @staticmethod
     async def create(cmd: schemas.CreateCategoryCommand) -> schemas.Category:
-        c = Category(**cmd.dict())
-        await c.save()
+        c = await Category.create(**cmd.dict())
         return schemas.Category.from_orm(c)
 
     @staticmethod
