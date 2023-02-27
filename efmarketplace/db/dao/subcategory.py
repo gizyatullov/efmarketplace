@@ -1,8 +1,8 @@
 from typing import List, Union
 
 from efmarketplace import schemas
-from efmarketplace.db.models.subcategory import Subcategory
 from efmarketplace.db.models.category import Category
+from efmarketplace.db.models.subcategory import Subcategory
 from efmarketplace.web.api import exceptions
 
 from .base import BaseDAO
@@ -17,7 +17,8 @@ class SubcategoryDAO(BaseDAO):
     async def create(cmd: schemas.CreateSubcategoryCommand) -> schemas.Subcategory:
         if not await Category.exists(id=cmd.category_id):
             raise exceptions.NotFound(
-                message=f"Not found category with ID {cmd.category_id}")
+                message=f"Not found category with ID {cmd.category_id}"
+            )
         s = await Subcategory.create(**cmd.dict())
         return schemas.Subcategory.from_orm(s)
 

@@ -26,10 +26,12 @@ class NotificationDAO(BaseDAO):
             async with in_transaction():
                 n = await Notification.create(**cmd.dict())
                 user_ids = await User.all().only("id")
-                await NotificationStatus.bulk_create(objects=[
-                    NotificationStatus(user_id=u.id, notification_id=n.id)
-                    for u in user_ids
-                ])
+                await NotificationStatus.bulk_create(
+                    objects=[
+                        NotificationStatus(user_id=u.id, notification_id=n.id)
+                        for u in user_ids
+                    ]
+                )
         except OperationalError as e:
             logger.error(f"...{e}")
         else:
@@ -41,11 +43,14 @@ class NotificationDAO(BaseDAO):
     ) -> schemas.Notification:
         try:
             async with in_transaction():
+                user_ids = await User.filter(id__in=cmd.user_ids).only("id")
                 n = await Notification.create(**cmd.dict())
-                await NotificationStatus.bulk_create(objects=[
-                    NotificationStatus(user_id=id_, notification_id=n.id)
-                    for id_ in cmd.user_ids
-                ])
+                await NotificationStatus.bulk_create(
+                    objects=[
+                        NotificationStatus(user_id=item.id, notification_id=n.id)
+                        for item in user_ids
+                    ]
+                )
         except OperationalError:
             raise InvalidIDsInRequest
         else:

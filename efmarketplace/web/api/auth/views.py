@@ -1,4 +1,3 @@
-from datetime import timedelta
 from typing import Dict, Optional, Union
 
 from fastapi import APIRouter, Depends, Security, status
@@ -9,7 +8,6 @@ from redis.asyncio import ConnectionPool
 from efmarketplace import schemas
 from efmarketplace.services import auth_service
 from efmarketplace.services.redis.dependency import get_redis_pool
-from efmarketplace.settings import settings
 from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 
 router = APIRouter()
@@ -17,9 +15,6 @@ router = APIRouter()
 __all__ = [
     "router",
 ]
-
-access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRES)
-refresh_token_expires = timedelta(days=settings.REFRESH_TOKEN_EXPIRES)
 
 
 @router.post(
@@ -45,12 +40,10 @@ async def auth_user(
 
     access_token = authorize.create_access_token(
         subject=user.username,
-        expires_time=access_token_expires,
         user_claims=user_claims,
     )
     refresh_token = authorize.create_refresh_token(
         subject=user.username,
-        expires_time=refresh_token_expires,
         user_claims=user_claims,
     )
     return schemas.Auth(access_token=access_token, refresh_token=refresh_token)
@@ -69,11 +62,10 @@ async def create_new_token_pair(
     current_user = authorize.get_jwt_subject()
     user_claims = {"uid": authorize.get_raw_jwt()["uid"]}
     access_token = authorize.create_access_token(
-        subject=current_user, expires_time=access_token_expires, user_claims=user_claims
+        subject=current_user, user_claims=user_claims
     )
     refresh_token = authorize.create_refresh_token(
         subject=current_user,
-        expires_time=refresh_token_expires,
         user_claims=user_claims,
     )
     return schemas.Auth(access_token=access_token, refresh_token=refresh_token)

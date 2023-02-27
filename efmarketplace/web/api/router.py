@@ -16,6 +16,9 @@ from efmarketplace.web.api.admin_ import notification as admin_notification
 api_router = APIRouter()
 api_router.include_router(docs.router)
 api_router.include_router(users.router, prefix="/user", tags=["User"])
+api_router.include_router(
+    users.router_create_user, prefix="/user", tags=["User Create"]
+)
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
 api_router.include_router(countries.router, prefix="/country", tags=["Country"])
 api_router.include_router(cities.router, prefix="/city", tags=["City"])

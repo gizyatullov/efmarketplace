@@ -1,23 +1,26 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, Security, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import HTTPBearer
 from fastapi_jwt_auth import AuthJWT
 from redis.asyncio import ConnectionPool
 
 from efmarketplace import schemas
 from efmarketplace.services import auth_service, notification_service, user_service
+from efmarketplace.services.authorization import auth_only
 from efmarketplace.services.redis.dependency import get_redis_pool
 from efmarketplace.web.api.exceptions.auth import IncorrectCaptcha
 
 __all__ = [
     "router",
+    "router_create_user",
 ]
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(auth_only), Security(HTTPBearer())])
+router_create_user = APIRouter()
 
 
-@router.post(
+@router_create_user.post(
     "/",
     response_model=schemas.User,
     status_code=status.HTTP_201_CREATED,
@@ -131,7 +134,6 @@ async def update_user(
 async def get_notification(
     query: schemas.ReadNotificationQuery,
     authorize: AuthJWT = Depends(),
-    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
     authorize.jwt_required()
     query = schemas.ReadNotificationWithUserUIDQuery(
@@ -142,16 +144,14 @@ async def get_notification(
 
 @router.patch(
     "/notification",
-    # response_model=List[schemas.Notification],
+    response_model=List[schemas.Notification],
     status_code=status.HTTP_202_ACCEPTED,
     description="Mark notifications as read by the user.",
 )
 async def mark_as_read(
     query: schemas.MarkAsReadNotificationCommand,
     authorize: AuthJWT = Depends(),
-    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
-    authorize.jwt_required()
     query = schemas.MarkAsReadNotificationWithUserUIDCommand(
         user_uid=authorize.get_raw_jwt()["uid"],
         uid_notifications=query.uid_notifications,

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, Security, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import HTTPBearer
 
 from efmarketplace import schemas
 from efmarketplace.services import notification_service
@@ -9,7 +9,7 @@ __all__ = [
     "router",
 ]
 
-router = APIRouter(dependencies=[Depends(auth_only_admin)])
+router = APIRouter(dependencies=[Depends(auth_only_admin), Security(HTTPBearer())])
 
 
 @router.post(
@@ -20,7 +20,6 @@ router = APIRouter(dependencies=[Depends(auth_only_admin)])
 async def create_notification_for_all(
     cmd: schemas.CreateNotificationCommand,
     background_tasks: BackgroundTasks,
-    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
     background_tasks.add_task(notification_service.create_notification_for_all, cmd=cmd)
     return {"message": "Notification sent in the background"}
@@ -34,6 +33,5 @@ async def create_notification_for_all(
 )
 async def create_notification_for_all(
     cmd: schemas.CreateNotificationSpecificUsersCommand,
-    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer()),
 ):
     return await notification_service.create_for_specific_users(cmd=cmd)

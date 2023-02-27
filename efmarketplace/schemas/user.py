@@ -27,10 +27,10 @@ class UserRole(Enum):
 class UserFields:
     id = Field(description="User id.", example=2)
     ids = Field(description="User ids.", example=[2, 4, 50])
-    username = Field(description="User Login", example="TestTest")
+    username = Field(description="User Login", example="good")
     password = Field(
         description="User password",
-        example="strong password",
+        example="password",
         min_length=6,
         max_length=256,
     )
@@ -100,7 +100,7 @@ class UserFields:
     )
     value_captcha = Field(
         description="Value captcha",
-        example="51iu6v",
+        example="51iu6v9s",
     )
 
 

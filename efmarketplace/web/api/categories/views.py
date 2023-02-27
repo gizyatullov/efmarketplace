@@ -1,16 +1,18 @@
 from typing import List
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, Security, status
+from fastapi.security import HTTPBearer
 from pydantic import PositiveInt
 
 from efmarketplace import schemas
 from efmarketplace.services import category_service
+from efmarketplace.services.authorization import auth_only
 
 __all__ = [
     "router",
 ]
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(auth_only), Security(HTTPBearer())])
 
 
 @router.post(

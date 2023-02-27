@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Security, status
+from fastapi.security import HTTPBearer
 from redis.asyncio import ConnectionPool
 
 from efmarketplace import schemas
 from efmarketplace.services import price_service
+from efmarketplace.services.authorization import auth_only
 from efmarketplace.services.redis.dependency import get_redis_pool
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(auth_only), Security(HTTPBearer())])
 
 __all__ = [
     "router",

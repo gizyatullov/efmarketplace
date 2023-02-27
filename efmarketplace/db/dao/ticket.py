@@ -19,7 +19,8 @@ class TicketResponseDAO:
     ) -> schemas.TicketResponse:
         if not await TicketModel.exists(id=cmd.ticket_id):
             raise exceptions.NotFound(
-                message=f"Not found ticket with ID {cmd.ticket_id}")
+                message=f"Not found ticket with ID {cmd.ticket_id}"
+            )
         ticket_response = await TicketResponseModel.create(**cmd.dict())
         return schemas.TicketResponse.from_orm(ticket_response)
 

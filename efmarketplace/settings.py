@@ -1,4 +1,5 @@
 import enum
+from datetime import timedelta
 from functools import lru_cache
 from pathlib import Path
 from tempfile import gettempdir
@@ -136,6 +137,12 @@ settings = Settings()
 
 class SettingsAuthJWT(BaseSettings):
     authjwt_secret_key: str = settings.JWT_SECRET_KEY.get_secret_value()
+    authjwt_access_token_expires: timedelta = timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRES
+    )
+    authjwt_refresh_token_expires: timedelta = timedelta(
+        days=settings.REFRESH_TOKEN_EXPIRES
+    )
 
 
 @AuthJWT.load_config
