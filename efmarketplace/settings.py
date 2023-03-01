@@ -67,6 +67,8 @@ class Settings(_Settings):
     POSTGRES_PASSWORD: SecretStr
     # PostgreSQL database name.
     POSTGRES_DB: str
+    # Fill in empty tables ?
+    FILL_TABLES: bool = False
 
     # Secret key for creating and verifying tokens
     JWT_SECRET_KEY: SecretStr = "..."

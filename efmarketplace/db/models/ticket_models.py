@@ -3,6 +3,11 @@ from tortoise import ForeignKeyFieldInstance, fields, models
 from efmarketplace.db.models.user import User
 from efmarketplace.schemas.ticket import TicketStatus
 
+__all__ = [
+    "TicketModel",
+    "TicketResponseModel",
+]
+
 
 class TicketModel(models.Model):
     """Ticket model."""

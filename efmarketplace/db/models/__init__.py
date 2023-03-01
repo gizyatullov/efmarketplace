@@ -1,4 +1,9 @@
 """Models for api."""
-from .city import City
-from .country import Country
-from .user import User
+from .category import *
+from .city import *
+from .country import *
+from .notification import *
+from .notification_status import *
+from .subcategory import *
+from .ticket_models import *
+from .user import *
