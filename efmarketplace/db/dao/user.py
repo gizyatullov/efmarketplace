@@ -80,10 +80,18 @@ class UserDAO(BaseDAO[Model]):
         return u
 
     @staticmethod
-    async def read_all() -> List[Schema]:
-        u = await Model.all()
+    async def read_all(query: schemas.ReadAllUserQuery) -> schemas.UsersWithPagination:
+        u = (
+            await Model.all()
+            .limit(query.limit)
+            .filter(id__gt=query.limit * query.offset)
+            .order_by("id")
+        )
+        total = await Model.all().count()
         result = [Schema.from_orm(item) for item in u]
-        return result
+        return schemas.UsersWithPagination(
+            items=result, total=total, page=query.offset, size=query.limit
+        )
 
     @staticmethod
     async def delete(cmd: DeleteUserCommand) -> Schema:

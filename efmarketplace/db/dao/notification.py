@@ -77,14 +77,25 @@ class NotificationDAO(BaseDAO):
     @staticmethod
     async def read(
         query: schemas.ReadNotificationWithUserUIDQuery,
-    ) -> List[schemas.Notification]:
-        statuses = await NotificationStatus.filter(
+    ) -> schemas.NotificationsWithPagination:
+        statuses = (
+            await NotificationStatus.filter(user_id=query.user_uid, status=query.view)
+            .prefetch_related("notification")
+            .limit(query.limit)
+            .offset(query.offset)
+            .order_by("id")
+        )
+
+        total = await NotificationStatus.filter(
             user_id=query.user_uid, status=query.view
-        ).prefetch_related("notification")
+        ).count()
+
         result = await NotificationDAO.orm_notification_status_in_pydantic(
             statuses=statuses
         )
-        return result
+        return schemas.NotificationsWithPagination(
+            items=result, total=total, page=query.offset, size=query.limit
+        )
 
     @staticmethod
     async def mark_as_read(

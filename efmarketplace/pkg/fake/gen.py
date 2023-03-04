@@ -37,7 +37,7 @@ fake.add_provider(job)
 
 
 async def fill_user():
-    if await models.User.all().count():
+    if not (await models.User.all().count() < QUANTITY_ITEMS):
         return
     for_save = []
     for _ in range(QUANTITY_ITEMS):

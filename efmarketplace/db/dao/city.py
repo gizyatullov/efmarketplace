@@ -40,6 +40,17 @@ class CityDAO(BaseDAO[models.City]):
         return c if orm_obj else Schema.from_orm(c)
 
     @staticmethod
-    async def read_all() -> List[Schema]:
-        c = await Model.all()
-        return [Schema.from_orm(item) for item in c]
+    async def read_all(query: schemas.ReadAllCityQuery) -> schemas.CitiesWithPagination:
+        c = (
+            await Model.all()
+            .limit(query.limit)
+            .filter(id__gt=query.limit * query.offset)
+            .order_by("id")
+        )
+        total = await Model.all().count()
+        return schemas.CitiesWithPagination(
+            items=[Schema.from_orm(item) for item in c],
+            total=total,
+            page=query.offset,
+            size=query.limit,
+        )

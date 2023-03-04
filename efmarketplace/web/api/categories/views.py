@@ -1,10 +1,9 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPBearer
 from pydantic import PositiveInt
 
 from efmarketplace import schemas
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 from efmarketplace.services import category_service
 from efmarketplace.services.authorization import auth_only
 
@@ -29,13 +28,13 @@ async def create_category(
 
 @router.get(
     "/",
-    response_model=List[schemas.Category],
+    response_model=schemas.CategoriesWithPagination,
     status_code=status.HTTP_200_OK,
     description="Get all categories.",
 )
 async def read_all_categories(
     limit: PositiveInt = 10,
-    offset: int = 0,
+    offset: PositiveIntWithZero = 0,
 ):
     query = schemas.ReadAllCategoryQuery(limit=limit, offset=offset)
     return await category_service.read_all_categories(query=query)

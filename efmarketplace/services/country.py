@@ -1,4 +1,4 @@
-from typing import List, Type, Union
+from typing import Type, Union
 
 from efmarketplace import schemas
 from efmarketplace.db.dao.country import CountryDAO
@@ -16,7 +16,7 @@ class CountryService:
 
     async def read_all_countries(
         self, query: schemas.ReadAllCountryQuery
-    ) -> List[schemas.CountryWithCities]:
+    ) -> schemas.CountriesWithPagination:
         return await self.repository.read_all(query=query)
 
     async def read_specific_country_by_name(

@@ -34,9 +34,22 @@ class TicketDAO:
         return schemas.Ticket.from_orm(t)
 
     @staticmethod
-    async def get_all_tickets(limit: int, offset: int) -> List[schemas.Ticket]:
-        t = await TicketModel.all().offset(offset).limit(limit)
-        return [schemas.Ticket.from_orm(item) for item in t]
+    async def get_all_tickets(
+        query: schemas.ReadAllTicketQuery,
+    ) -> schemas.TicketsWithPagination:
+        t = (
+            await TicketModel.all()
+            .limit(query.limit)
+            .filter(id__gt=query.limit * query.offset)
+            .order_by("id")
+        )
+        total = await TicketModel.all().count()
+        return schemas.TicketsWithPagination(
+            items=[schemas.Ticket.from_orm(item) for item in t],
+            total=total,
+            page=query.offset,
+            size=query.limit,
+        )
 
     @staticmethod
     async def read_by_id(id_: int) -> Optional[schemas.Ticket]:

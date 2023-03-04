@@ -1,4 +1,4 @@
-from typing import List, Literal, Union, overload
+from typing import Literal, Union, overload
 
 from efmarketplace import schemas
 from efmarketplace.db import models
@@ -80,9 +80,16 @@ class CountryDAO(BaseDAO[Model]):
     @staticmethod
     async def read_all(
         query: ReadAllCountryQuery,
-    ) -> Union[List[Schema], List[SchemaWithCities]]:
+    ) -> schemas.CountriesWithPagination:
+        total = await Model.all().count()
         if query.with_cities:
-            c = await Model.all().prefetch_related("cities")
+            c = (
+                await Model.all()
+                .prefetch_related("cities")
+                .limit(query.limit)
+                .filter(id__gt=query.limit * query.offset)
+                .order_by("id")
+            )
             result = []
             for item in c:
                 el = SchemaWithCities.parse_obj(item)
@@ -90,7 +97,19 @@ class CountryDAO(BaseDAO[Model]):
                     SchemaCityWithoutCountryID.from_orm(city) for city in item.cities
                 ]
                 result.append(el)
-            return result
+            return schemas.CountriesWithPagination(
+                items=result, total=total, page=query.offset, size=query.limit
+            )
 
-        c = await Model.all()
-        return [Schema.from_orm(item) for item in c]
+        c = (
+            await Model.all()
+            .limit(query.limit)
+            .filter(id__gt=query.limit * query.offset)
+            .order_by("id")
+        )
+        return schemas.CountriesWithPagination(
+            items=[Schema.from_orm(item) for item in c],
+            total=total,
+            page=query.offset,
+            size=query.limit,
+        )

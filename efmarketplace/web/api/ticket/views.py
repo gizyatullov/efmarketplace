@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, status
 from fastapi.param_functions import Depends, Security
 from fastapi.security import HTTPBearer
@@ -8,18 +6,22 @@ from pydantic import PositiveInt
 
 from efmarketplace import schemas
 from efmarketplace.db.dao.ticket import TicketDAO, TicketResponseDAO
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 from efmarketplace.services.authorization import auth_only
 
 router = APIRouter(dependencies=[Depends(auth_only), Security(HTTPBearer())])
 
 
-@router.get("/", response_model=List[schemas.Ticket])
+@router.get(
+    "/", response_model=schemas.TicketsWithPagination, status_code=status.HTTP_200_OK
+)
 async def get_tickets(
-    limit: int = 10,
-    offset: int = 0,
+    limit: PositiveInt = 10,
+    offset: PositiveIntWithZero = 0,
     ticket_dao: TicketDAO = Depends(),
 ):
-    return await ticket_dao.get_all_tickets(limit=limit, offset=offset)
+    query = schemas.ReadAllTicketQuery(limit=limit, offset=offset)
+    return await ticket_dao.get_all_tickets(query=query)
 
 
 @router.post("/", response_model=schemas.Ticket, status_code=status.HTTP_201_CREATED)

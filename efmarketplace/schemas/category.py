@@ -1,12 +1,17 @@
+from typing import List
+
 from pydantic import Field, PositiveInt
 
 from efmarketplace.pkg.types import LowerStr, NotEmptyStr
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 
 from .base import BaseModel
+from .general import ForPaginationFields
 
 __all__ = [
     "CategoryFields",
     "Category",
+    "CategoriesWithPagination",
     "CreateCategoryCommand",
     "ReadAllCategoryQuery",
     "ReadCategoryByNameQuery",
@@ -31,6 +36,13 @@ class Category(BaseCategory):
     name: NotEmptyStr = CategoryFields.name
 
 
+class CategoriesWithPagination(BaseCategory):
+    items: List[Category]
+    total: PositiveIntWithZero = ForPaginationFields.total
+    page: PositiveIntWithZero = ForPaginationFields.page
+    size: PositiveInt = ForPaginationFields.size
+
+
 # Commands.
 class CreateCategoryCommand(BaseCategory):
     name: LowerStr = CategoryFields.name
@@ -39,7 +51,7 @@ class CreateCategoryCommand(BaseCategory):
 # Query
 class ReadAllCategoryQuery(BaseCategory):
     limit: PositiveInt = 10
-    offset: int = 0
+    offset: PositiveIntWithZero = 0
 
 
 class ReadCategoryByNameQuery(BaseCategory):

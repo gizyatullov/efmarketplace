@@ -1,9 +1,13 @@
 from datetime import datetime
 from enum import Enum
+from typing import List
 
 from pydantic import Field, PositiveInt
 
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
+
 from .base import BaseModel
+from .general import ForPaginationFields
 from .user import UserFields
 
 __all__ = [
@@ -11,6 +15,8 @@ __all__ = [
     "TicketFields",
     "Ticket",
     "TicketResponse",
+    "TicketsWithPagination",
+    "ReadAllTicketQuery",
     "CreateTicketCommand",
     "CreateTicketWithUserIDCommand",
     "CreateTicketResponseCommand",
@@ -18,7 +24,7 @@ __all__ = [
 ]
 
 
-class TicketStatus(Enum):
+class TicketStatus(str, Enum):
     """Status for TicketModel status field."""
 
     NEW = "new"
@@ -60,6 +66,19 @@ class TicketResponse(BaseTicket):
     sender_id: PositiveInt = UserFields.id
     ticket_id: PositiveInt = TicketFields.ticket_id
     created: datetime = TicketFields.created
+
+
+class TicketsWithPagination(BaseTicket):
+    items: List[Ticket]
+    total: PositiveIntWithZero = ForPaginationFields.total
+    page: PositiveIntWithZero = ForPaginationFields.page
+    size: PositiveInt = ForPaginationFields.size
+
+
+# Query
+class ReadAllTicketQuery(BaseTicket):
+    limit: PositiveInt = 10
+    offset: PositiveIntWithZero = 0
 
 
 # Commands.

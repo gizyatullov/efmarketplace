@@ -14,8 +14,10 @@ class CityService:
     def __init__(self, city_repository: Type[CityDAO]):
         self.repository = city_repository
 
-    async def read_all_cities(self) -> List[schemas.City]:
-        return await self.repository.read_all()
+    async def read_all_cities(
+        self, query: schemas.ReadAllCityQuery
+    ) -> schemas.CitiesWithPagination:
+        return await self.repository.read_all(query=query)
 
     async def read_specific_city_by_name(
         self, query: schemas.ReadCityByNameQuery

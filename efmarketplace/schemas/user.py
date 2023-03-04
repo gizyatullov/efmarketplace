@@ -1,15 +1,20 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
 
-from pydantic import AnyHttpUrl, Field, PositiveInt
+from pydantic import Field, PositiveInt
+
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 
 from .base import BaseModel
+from .general import ForPaginationFields
 
 __all__ = [
     "User",
     "UserFields",
+    "UsersWithPagination",
     "CreateUserCommand",
+    "ReadAllUserQuery",
     "ReadUserByIdQuery",
     "ReadUserByUserNameQuery",
     "UpdateUserCommand",
@@ -19,7 +24,7 @@ __all__ = [
 ]
 
 
-class UserRole(Enum):
+class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
 
@@ -114,17 +119,23 @@ class BaseUser(BaseModel):
 class User(BaseUser):
     id: PositiveInt = UserFields.id
     username: str = UserFields.username
-    password: str = UserFields.password
     role_name: UserRole = UserFields.role_name
     is_seller: bool = UserFields.is_seller
     btc_balance: Optional[float] = UserFields.btc_balance
     btc_address: Optional[str] = UserFields.btc_address
     otp: Optional[str] = UserFields.otp
     city: Optional[str] = UserFields.city
-    avatar: Optional[AnyHttpUrl] = UserFields.avatar
+    avatar: Optional[str] = UserFields.avatar
     created: datetime = UserFields.created
     is_banned: Optional[bool] = UserFields.is_banned
     user_ban_date: Optional[datetime] = UserFields.user_ban_date
+
+
+class UsersWithPagination(BaseUser):
+    items: List[User]
+    total: PositiveIntWithZero = ForPaginationFields.total
+    page: PositiveIntWithZero = ForPaginationFields.page
+    size: PositiveInt = ForPaginationFields.size
 
 
 # Commands.
@@ -144,7 +155,7 @@ class UpdateUserCommand(BaseUser):
     btc_address: str = UserFields.btc_address
     otp: str = UserFields.otp
     city: str = UserFields.city
-    avatar: AnyHttpUrl = UserFields.avatar
+    avatar: str = UserFields.avatar
     is_banned: bool = UserFields.is_banned
     user_ban_date: datetime = UserFields.user_ban_date
 
@@ -160,6 +171,11 @@ class ChangeUserPasswordCommand(BaseUser):
 
 
 # Query
+class ReadAllUserQuery(BaseUser):
+    limit: PositiveInt = 10
+    offset: PositiveIntWithZero = 0
+
+
 class ReadUserByUserNameQuery(BaseUser):
     username: str = UserFields.username
 

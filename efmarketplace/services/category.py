@@ -21,7 +21,7 @@ class CategoryService:
 
     async def read_all_categories(
         self, query: schemas.ReadAllCategoryQuery
-    ) -> List[schemas.Category]:
+    ) -> schemas.CategoriesWithPagination:
         return await self.repository.read_all(query=query)
 
     async def read_specific_category_by_name(

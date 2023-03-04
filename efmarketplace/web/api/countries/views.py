@@ -1,9 +1,11 @@
-from typing import List, Union
+from typing import Union
 
 from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPBearer
+from pydantic import PositiveInt
 
 from efmarketplace import schemas
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 from efmarketplace.services import country_service
 from efmarketplace.services.authorization import auth_only
 
@@ -16,15 +18,17 @@ router = APIRouter(dependencies=[Depends(auth_only), Security(HTTPBearer())])
 
 @router.get(
     "/",
+    response_model=schemas.CountriesWithPagination,
     status_code=status.HTTP_200_OK,
     description="Get all countries.",
 )
 async def read_all_countries(
     cities: bool = False,
-) -> Union[List[schemas.Country], List[schemas.CountryWithCities]]:
-    return await country_service.read_all_countries(
-        query=schemas.ReadAllCountryQuery(with_cities=cities)
-    )
+    limit: PositiveInt = 10,
+    offset: PositiveIntWithZero = 0,
+):
+    query = schemas.ReadAllCountryQuery(with_cities=cities, limit=limit, offset=offset)
+    return await country_service.read_all_countries(query=query)
 
 
 @router.get(

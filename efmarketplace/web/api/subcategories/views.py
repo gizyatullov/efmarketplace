@@ -1,9 +1,9 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPBearer
+from pydantic import PositiveInt
 
 from efmarketplace import schemas
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 from efmarketplace.services import subcategory_service
 from efmarketplace.services.authorization import auth_only
 
@@ -28,12 +28,16 @@ async def create_subcategory(
 
 @router.get(
     "/",
-    response_model=List[schemas.Subcategory],
+    response_model=schemas.SubcategoriesWithPagination,
     status_code=status.HTTP_200_OK,
     description="Get all subcategories.",
 )
-async def read_all_subcategories():
-    return await subcategory_service.read_all_subcategories()
+async def read_all_subcategories(
+    limit: PositiveInt = 10,
+    offset: PositiveIntWithZero = 0,
+):
+    query = schemas.ReadAllSubcategoryQuery(limit=limit, offset=offset)
+    return await subcategory_service.read_all_subcategories(query=query)
 
 
 @router.get(

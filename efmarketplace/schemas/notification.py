@@ -4,7 +4,10 @@ from typing import List, Union
 
 from pydantic import Field, PositiveInt
 
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
+
 from .base import BaseModel
+from .general import ForPaginationFields
 from .user import UserFields
 
 __all__ = [
@@ -12,6 +15,7 @@ __all__ = [
     "NotificationStatusFields",
     "NotificationStatus",
     "Notification",
+    "NotificationsWithPagination",
     "CreateNotificationCommand",
     "CreateNotificationSpecificUsersCommand",
     "MarkAsReadNotificationCommand",
@@ -22,7 +26,7 @@ __all__ = [
 ]
 
 
-class StatusReceivedNotification(Enum):
+class StatusReceivedNotification(str, Enum):
     ANY = "any"
     NOT_READ = "not read"
     READ = "read"
@@ -80,6 +84,13 @@ class Notification(BaseNotification):
     created: datetime = NotificationFields.created
 
 
+class NotificationsWithPagination(BaseNotification):
+    items: List[Notification] = []
+    total: PositiveIntWithZero = ForPaginationFields.total
+    page: PositiveIntWithZero = ForPaginationFields.page
+    size: PositiveInt = ForPaginationFields.size
+
+
 # Commands.
 class CreateNotificationCommand(BaseNotification):
     name: str = NotificationFields.name
@@ -112,8 +123,12 @@ class MarkAsReadNotificationWithUserUIDCommand(BaseNotification):
 # Query
 class ReadNotificationQuery(BaseNotification):
     view: bool = NotificationFields.view
+    limit: PositiveInt = 10
+    offset: PositiveIntWithZero = 0
 
 
 class ReadNotificationWithUserUIDQuery(BaseNotification):
     user_uid: Union[PositiveInt, str] = UserFields.id
     view: bool = NotificationFields.view
+    limit: PositiveInt = 10
+    offset: PositiveIntWithZero = 0

@@ -1,15 +1,18 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from pydantic import Field, PositiveInt
 
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 from efmarketplace.pkg.types.strings import LowerStr
 
 from .base import BaseModel
 from .city import CityWithoutCountryID
+from .general import ForPaginationFields
 
 __all__ = [
     "CountryFields",
     "Country",
+    "CountriesWithPagination",
     "ReadCountryByNameQuery",
     "ReadCountryByIdQuery",
     "ReadAllCountryQuery",
@@ -38,12 +41,21 @@ class Country(BaseCountry):
 
 
 class CountryWithCities(Country):
-    cities: List[CityWithoutCountryID] = []
+    cities: List[Optional[CityWithoutCountryID]] = []
+
+
+class CountriesWithPagination(BaseCountry):
+    items: List[Union[CountryWithCities, Country]]
+    total: PositiveIntWithZero = ForPaginationFields.total
+    page: PositiveIntWithZero = ForPaginationFields.page
+    size: PositiveInt = ForPaginationFields.size
 
 
 # Query
 class ReadAllCountryQuery(BaseCountry):
     with_cities: bool = False
+    limit: PositiveInt = 10
+    offset: PositiveIntWithZero = 0
 
 
 class ReadCountryByNameQuery(BaseCountry):

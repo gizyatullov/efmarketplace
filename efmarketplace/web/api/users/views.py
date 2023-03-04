@@ -3,9 +3,11 @@ from typing import List
 from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPBearer
 from fastapi_jwt_auth import AuthJWT
+from pydantic import PositiveInt
 from redis.asyncio import ConnectionPool
 
 from efmarketplace import schemas
+from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 from efmarketplace.services import auth_service, notification_service, user_service
 from efmarketplace.services.authorization import auth_only
 from efmarketplace.services.redis.dependency import get_redis_pool
@@ -43,13 +45,16 @@ async def create_user(
 
 @router.get(
     "/",
-    response_model=List[schemas.User],
+    response_model=schemas.UsersWithPagination,
     status_code=status.HTTP_200_OK,
-    response_model_exclude={"password"},
     description="Get all users without password field.",
 )
-async def read_all_users():
-    return await user_service.read_all_users()
+async def read_all_users(
+    limit: PositiveInt = 10,
+    offset: PositiveIntWithZero = 0,
+):
+    query = schemas.ReadAllUserQuery(limit=limit, offset=offset)
+    return await user_service.read_all_users(query=query)
 
 
 @router.get(
@@ -127,7 +132,7 @@ async def update_user(
 
 @router.post(
     "/notification",
-    response_model=List[schemas.Notification],
+    response_model=schemas.NotificationsWithPagination,
     status_code=status.HTTP_200_OK,
     description="Receiving notifications by the user.",
 )
@@ -137,7 +142,7 @@ async def get_notification(
 ):
     authorize.jwt_required()
     query = schemas.ReadNotificationWithUserUIDQuery(
-        user_uid=authorize.get_raw_jwt()["uid"], view=query.view
+        user_uid=authorize.get_raw_jwt()["uid"], **query.dict()
     )
     return await notification_service.read_user_notifications(query=query)
 

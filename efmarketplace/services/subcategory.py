@@ -19,8 +19,10 @@ class SubcategoryService:
     ) -> schemas.Subcategory:
         return await self.repository.create(cmd=cmd)
 
-    async def read_all_subcategories(self) -> List[schemas.Subcategory]:
-        return await self.repository.read_all()
+    async def read_all_subcategories(
+        self, query: schemas.ReadAllSubcategoryQuery
+    ) -> schemas.SubcategoriesWithPagination:
+        return await self.repository.read_all(query=query)
 
     async def read_specific_subcategory_by_name(
         self, query: schemas.ReadSubcategoryByNameQuery

@@ -37,6 +37,19 @@ class SubcategoryDAO(BaseDAO):
         return s if orm_obj else schemas.Subcategory.from_orm(s)
 
     @staticmethod
-    async def read_all() -> List[schemas.Subcategory]:
-        s = await Subcategory.all()
-        return [schemas.Subcategory.from_orm(item) for item in s]
+    async def read_all(
+        query: schemas.ReadAllSubcategoryQuery,
+    ) -> schemas.SubcategoriesWithPagination:
+        s = (
+            await Subcategory.all()
+            .limit(query.limit)
+            .filter(id__gt=query.limit * query.offset)
+            .order_by("id")
+        )
+        total = await Subcategory.all().count()
+        return schemas.SubcategoriesWithPagination(
+            items=[schemas.Subcategory.from_orm(item) for item in s],
+            total=total,
+            page=query.offset,
+            size=query.limit,
+        )

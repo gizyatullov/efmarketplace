@@ -15,8 +15,10 @@ class UserService:
     async def create_user(self, cmd: schemas.CreateUserCommand) -> schemas.User:
         return await self.repository.create(cmd=cmd)
 
-    async def read_all_users(self) -> List[schemas.User]:
-        return await self.repository.read_all()
+    async def read_all_users(
+        self, query: schemas.ReadAllUserQuery
+    ) -> schemas.UsersWithPagination:
+        return await self.repository.read_all(query=query)
 
     async def read_specific_user_by_username(
         self, query: schemas.ReadUserByUserNameQuery, orm_obj: bool = False
