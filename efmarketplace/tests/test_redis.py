@@ -6,7 +6,6 @@ from httpx import AsyncClient
 from redis.asyncio import ConnectionPool, Redis
 from starlette import status
 
-
 # @pytest.mark.anyio
 # async def test_setting_value(
 #     fastapi_app: FastAPI,

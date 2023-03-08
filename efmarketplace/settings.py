@@ -3,6 +3,7 @@ from datetime import timedelta
 from functools import lru_cache
 from pathlib import Path
 from tempfile import gettempdir
+from typing import Optional, Union
 
 from dotenv import find_dotenv
 from fastapi_jwt_auth import AuthJWT
@@ -95,6 +96,10 @@ class Settings(_Settings):
     # Redis database id.
     REDIS_DATABASE_ID: PositiveInt = 1
 
+    # Cache
+    # If you use it for how many minutes
+    USE_CACHE: Optional[PositiveInt] = None
+
     @property
     def db_url(self) -> URL:
         """
@@ -112,17 +117,6 @@ class Settings(_Settings):
         )
 
     @property
-    def test_db_url(self) -> URL:
-        return URL.build(
-            scheme="postgres",
-            host=self.POSTGRES_HOST,
-            port=self.POSTGRES_PORT,
-            user=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD.get_secret_value(),
-            path=f"/test_efmarketplace",
-        )
-
-    @property
     def redis_url(self) -> URL:
         """
         Assemble REDIS URL from settings.
@@ -137,6 +131,10 @@ class Settings(_Settings):
             password=self.REDIS_PASSWORD.get_secret_value(),
             path=f"/{self.REDIS_DATABASE_ID}",
         )
+
+    @property
+    def cache(self) -> Optional[PositiveInt]:
+        return 60 * self.USE_CACHE if self.USE_CACHE else None
 
 
 @lru_cache()

@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPBearer
+from fastapi_cache.decorator import cache
 from pydantic import PositiveInt
 
 from efmarketplace import schemas
 from efmarketplace.pkg.types.integeres import PositiveIntWithZero
 from efmarketplace.services import category_service
 from efmarketplace.services.authorization import auth_only
+from efmarketplace.settings import settings
 
 __all__ = [
     "router",
@@ -32,6 +34,7 @@ async def create_category(
     status_code=status.HTTP_200_OK,
     description="Get all categories.",
 )
+@cache(expire=settings.cache)
 async def read_all_categories(
     limit: PositiveInt = 10,
     offset: PositiveIntWithZero = 0,

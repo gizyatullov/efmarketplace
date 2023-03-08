@@ -3,6 +3,7 @@ from typing import Awaitable, Callable
 from fastapi import FastAPI
 
 from efmarketplace.pkg.price import init_price_update_repeater
+from efmarketplace.services.cache.lifetime import init_cache
 from efmarketplace.services.redis.lifetime import init_redis, shutdown_redis
 
 
@@ -23,6 +24,7 @@ def register_startup_event(
     async def _startup() -> None:  # noqa: WPS430
         init_redis(app)
         init_price_update_repeater(app)
+        init_cache(app)
 
     return _startup
 

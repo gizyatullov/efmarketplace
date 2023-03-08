@@ -123,7 +123,6 @@ class User(BaseUser):
     is_seller: bool = UserFields.is_seller
     btc_balance: Optional[float] = UserFields.btc_balance
     btc_address: Optional[str] = UserFields.btc_address
-    otp: Optional[str] = UserFields.otp
     city: Optional[str] = UserFields.city
     avatar: Optional[str] = UserFields.avatar
     created: datetime = UserFields.created
@@ -151,9 +150,7 @@ class UpdateUserCommand(BaseUser):
     username: str = UserFields.username
     role_name: Optional[UserRole] = UserFields.role_name
     is_seller: bool = UserFields.is_seller
-    btc_balance: float = UserFields.btc_balance
     btc_address: str = UserFields.btc_address
-    otp: str = UserFields.otp
     city: str = UserFields.city
     avatar: str = UserFields.avatar
     is_banned: bool = UserFields.is_banned
