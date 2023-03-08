@@ -112,6 +112,17 @@ class Settings(_Settings):
         )
 
     @property
+    def test_db_url(self) -> URL:
+        return URL.build(
+            scheme="postgres",
+            host=self.POSTGRES_HOST,
+            port=self.POSTGRES_PORT,
+            user=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD.get_secret_value(),
+            path=f"/test_efmarketplace",
+        )
+
+    @property
     def redis_url(self) -> URL:
         """
         Assemble REDIS URL from settings.

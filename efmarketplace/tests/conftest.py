@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any, AsyncGenerator
 
 import nest_asyncio
@@ -19,6 +20,14 @@ nest_asyncio.apply()
 
 
 @pytest.fixture(scope="session")
+def event_loop():
+    """Create an instance of the default event loop for each test case."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest.fixture(scope="session")
 def anyio_backend() -> str:
     """
     Backend for anyio pytest plugin.
@@ -28,7 +37,7 @@ def anyio_backend() -> str:
     return "asyncio"
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 async def initialize_db() -> AsyncGenerator[None, None]:
     """
     Initialize models and database.
@@ -36,11 +45,11 @@ async def initialize_db() -> AsyncGenerator[None, None]:
     :yields: Nothing.
     """
     initializer(
-        MODELS_MODULES,
+        modules=MODELS_MODULES,
         db_url=str(settings.db_url),
         app_label="models",
     )
-    await Tortoise.init(config=TORTOISE_CONFIG)
+    await Tortoise.init(config=TORTOISE_CONFIG, _create_db=True)
 
     yield
 

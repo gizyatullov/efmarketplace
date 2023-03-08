@@ -14,7 +14,7 @@ readme = "README.md"
 python = "^3.9"
 fastapi = "^0.85.0"
 uvicorn = { version = "^0.18.3", extras = ["standard"] }
-pydantic = {version = "^1.10.2", extras = ["dotenv"]}
+pydantic = { version = "^1.10.2", extras = ["dotenv"] }
 yarl = "^1.8.1"
 ujson = "^5.5.0"
 tortoise-orm = "^0.19.2"
@@ -49,11 +49,12 @@ httpx = "^0.23.0"
 
 [tool.poetry.group.dev.dependencies]
 faker = "^17.3.0"
+pytest-asyncio = "^0.20.3"
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
-src_paths = ["efmarketplace",]
+src_paths = ["efmarketplace", ]
 
 [tool.mypy]
 strict = true
@@ -85,6 +86,10 @@ filterwarnings = [
 env = [
     "EFMARKETPLACE_DB_BASE=efmarketplace_test",
 ]
+#pythonpath = [
+#    ".", "efmarketplace",
+#]
+asyncio_mode = "auto"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
