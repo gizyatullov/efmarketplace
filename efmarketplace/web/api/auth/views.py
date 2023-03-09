@@ -36,6 +36,8 @@ async def auth_user(
         raise IncorrectCaptcha
 
     user = await auth_service.check_user_password(cmd=cmd)
+    await auth_service.check_user_otp_code(cmd=cmd)
+
     user_claims = {"uid": user.id}
 
     access_token = authorize.create_access_token(

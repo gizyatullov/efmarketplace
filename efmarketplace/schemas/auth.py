@@ -43,6 +43,7 @@ class AuthCommand(BaseAuth):
     password: str = AuthFields.password
     uid_captcha: str = AuthFields.uid_captcha
     value_captcha: str = AuthFields.value_captcha
+    otp_code: str = ""
 
 
 class LogoutCommand(BaseAuth):
