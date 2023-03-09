@@ -11,8 +11,8 @@ from efmarketplace import schemas
 from efmarketplace.pkg.types.strings import NotEmptyStr
 from efmarketplace.services.user import UserService
 from efmarketplace.settings import settings
-from efmarketplace.web.api.exceptions.auth import IncorrectUsernameOrPassword
 from efmarketplace.web.api import exceptions
+from efmarketplace.web.api.exceptions.auth import IncorrectUsernameOrPassword
 
 
 class AuthService:
@@ -29,15 +29,17 @@ class AuthService:
         self.user_service = user_service
         self.image_captcha = image_captcha
 
-    async def check_user_otp_code(self, cmd: schemas.AuthCommand) -> bool:
+    async def check_user_otp_code(
+        self, username: str, otp_code: str, get_orm_obj: bool = False
+    ):
         user = await self.user_service.read_specific_user_by_username(
-            query=schemas.ReadUserByUserNameQuery(username=cmd.username), orm_obj=True
+            query=schemas.ReadUserByUserNameQuery(username=username), orm_obj=True
         )
         if not user.otp:
-            return True
-        if not await user.check_otp(code=cmd.otp_code):
+            return user if get_orm_obj else True
+        if not await user.check_otp(code=otp_code):
             raise exceptions.OTPIncorrect
-        return True
+        return user if get_orm_obj else True
 
     async def check_user_password(self, cmd: schemas.AuthCommand) -> schemas.User:
         user = await self.user_service.read_specific_user_by_username(
@@ -94,3 +96,11 @@ class AuthService:
             redis_pool=redis_pool, uid_captcha=str(uid), value_captcha=value
         )
         return schemas.CaptchaWithoutValue(uid=uid, image=image_in_base64)
+
+    async def unplug_otp(self, cmd: schemas.UnplugOTPWithUserNameCommand):
+        u = await self.check_user_otp_code(
+            username=cmd.username, otp_code=cmd.otp_code, get_orm_obj=True
+        )
+        await u.unplug_otp()
+        await u.save()
+        return {"detail": "success"}

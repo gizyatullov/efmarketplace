@@ -170,7 +170,22 @@ async def mark_as_read(
     status_code=status.HTTP_202_ACCEPTED,
     description="Install OTP.",
 )
-async def set_otp(authorize: AuthJWT = Depends(), ):
-    cmd = schemas.SetOTPWithUserNameCommand(
-        username=authorize.get_raw_jwt()["sub"])
+async def set_otp(
+    authorize: AuthJWT = Depends(),
+):
+    cmd = schemas.SetOTPWithUserNameCommand(username=authorize.get_raw_jwt()["sub"])
     return await user_service.set_otp(cmd=cmd)
+
+
+@router.patch(
+    "/unplug-otp",
+    status_code=status.HTTP_202_ACCEPTED,
+    description="Unplug OTP.",
+)
+async def unplug_otp(
+    cmd: schemas.UnplugOTPCommand,
+    authorize: AuthJWT = Depends(),
+):
+    username = authorize.get_raw_jwt()["sub"]
+    cmd = schemas.UnplugOTPWithUserNameCommand(otp_code=cmd.otp_code, username=username)
+    return await auth_service.unplug_otp(cmd=cmd)

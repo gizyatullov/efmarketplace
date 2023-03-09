@@ -1,6 +1,6 @@
-from typing import Type
 import base64
 import io
+from typing import Type
 
 import pyotp
 import qrcode
@@ -59,8 +59,7 @@ class UserService:
 
         k = await self.repository.set_otp(username=cmd.username)
         totp = pyotp.totp.TOTP(s=k).provisioning_uri(
-            name="efmarketplace",
-            issuer_name=cmd.username
+            name="efmarketplace", issuer_name=cmd.username
         )
         qr = qrcode.make(totp)
         buffer = io.BytesIO()
@@ -69,7 +68,4 @@ class UserService:
         qr = buffer.read()
         qr = base64.b64encode(s=qr).decode(encoding="utf-8")
 
-        return schemas.OTP(
-            otp=k,
-            qr=qr
-        )
+        return schemas.OTP(otp=k, qr=qr)

@@ -126,8 +126,7 @@ class UserDAO(BaseDAO[Model]):
 
     @classmethod
     async def check_otp_install(cls, username: str) -> bool:
-        u = await cls.read_by_username_select_fields(username=username,
-                                                     fields=["otp"])
+        u = await cls.read_by_username_select_fields(username=username, fields=["otp"])
         return True if u.otp else False
 
     @classmethod

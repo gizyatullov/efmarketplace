@@ -1,6 +1,6 @@
 import bcrypt
-from tortoise import fields, models
 import pyotp
+from tortoise import fields, models
 
 from efmarketplace import schemas
 
@@ -51,3 +51,6 @@ class User(models.Model):
     async def check_otp(self, code: str) -> bool:
         totp = pyotp.TOTP(self.otp)
         return totp.verify(code)
+
+    async def unplug_otp(self) -> None:
+        self.otp = None

@@ -10,7 +10,7 @@ __all__ = [
 
 class OTPAlreadyInstalled(BaseAPIException):
     status_code = status.HTTP_409_CONFLICT
-    message = "OTP already installed, try to update"
+    message = "OTP already installed, try to remove, then install"
 
 
 class OTPIncorrect(BaseAPIException):
