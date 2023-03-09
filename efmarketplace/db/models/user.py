@@ -1,5 +1,6 @@
 import bcrypt
 from tortoise import fields, models
+import pyotp
 
 from efmarketplace import schemas
 
@@ -41,3 +42,12 @@ class User(models.Model):
         password_bytes = password.encode("utf-8")
         hashed_bytes = self.password.encode("utf-8")
         return bcrypt.checkpw(password_bytes, hashed_bytes)
+
+    async def set_otp(self) -> str:
+        k = pyotp.random_base32()
+        self.otp = k
+        return k
+
+    async def check_otp(self, code: str) -> bool:
+        totp = pyotp.TOTP(self.otp)
+        return totp.verify(code)

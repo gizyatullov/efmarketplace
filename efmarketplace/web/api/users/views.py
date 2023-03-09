@@ -162,3 +162,15 @@ async def mark_as_read(
         uid_notifications=query.uid_notifications,
     )
     return await notification_service.mark_as_read(query=query)
+
+
+@router.post(
+    "/set-otp",
+    response_model=schemas.OTP,
+    status_code=status.HTTP_202_ACCEPTED,
+    description="Install OTP.",
+)
+async def set_otp(authorize: AuthJWT = Depends(), ):
+    cmd = schemas.SetOTPWithUserNameCommand(
+        username=authorize.get_raw_jwt()["sub"])
+    return await user_service.set_otp(cmd=cmd)

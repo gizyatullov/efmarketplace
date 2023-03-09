@@ -10,3 +10,4 @@ from .price import *
 from .subcategory import *
 from .ticket import *
 from .user import *
+from .otp import *

@@ -21,6 +21,7 @@ __all__ = [
     "DeleteUserCommand",
     "ChangeUserPasswordCommand",
     "UserRole",
+    "UserName",
 ]
 
 
@@ -135,6 +136,10 @@ class UsersWithPagination(BaseUser):
     total: PositiveIntWithZero = ForPaginationFields.total
     page: PositiveIntWithZero = ForPaginationFields.page
     size: PositiveInt = ForPaginationFields.size
+
+
+class UserName(BaseUser):
+    username: str = UserFields.username
 
 
 # Commands.

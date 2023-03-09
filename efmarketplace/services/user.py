@@ -1,7 +1,13 @@
-from typing import List, Type
+from typing import Type
+import base64
+import io
+
+import pyotp
+import qrcode
 
 from efmarketplace import schemas
 from efmarketplace.db.dao.user import UserDAO
+from efmarketplace.web.api import exceptions
 
 __all__ = ["UserService"]
 
@@ -46,3 +52,24 @@ class UserService:
         self, cmd: schemas.UpdateUserCommand
     ) -> schemas.User:
         return await self.repository.update_specific_user_by_username(cmd=cmd)
+
+    async def set_otp(self, cmd: schemas.SetOTPWithUserNameCommand) -> schemas.OTP:
+        if await self.repository.check_otp_install(username=cmd.username):
+            raise exceptions.OTPAlreadyInstalled
+
+        k = await self.repository.set_otp(username=cmd.username)
+        totp = pyotp.totp.TOTP(s=k).provisioning_uri(
+            name="efmarketplace",
+            issuer_name=cmd.username
+        )
+        qr = qrcode.make(totp)
+        buffer = io.BytesIO()
+        qr.save(buffer)
+        buffer.seek(0)
+        qr = buffer.read()
+        qr = base64.b64encode(s=qr).decode(encoding="utf-8")
+
+        return schemas.OTP(
+            otp=k,
+            qr=qr
+        )

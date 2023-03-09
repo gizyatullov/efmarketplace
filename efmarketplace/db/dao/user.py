@@ -123,3 +123,16 @@ class UserDAO(BaseDAO[Model]):
         await u.save()
 
         return Schema.from_orm(obj=u)
+
+    @classmethod
+    async def check_otp_install(cls, username: str) -> bool:
+        u = await cls.read_by_username_select_fields(username=username,
+                                                     fields=["otp"])
+        return True if u.otp else False
+
+    @classmethod
+    async def set_otp(cls, username: str) -> str:
+        u = await Model.get(username=username)
+        k = await u.set_otp()
+        await u.save()
+        return k
