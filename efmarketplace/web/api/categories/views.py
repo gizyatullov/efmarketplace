@@ -49,6 +49,7 @@ async def read_all_categories(
     status_code=status.HTTP_200_OK,
     description="Read specific category by id.",
 )
+@cache(expire=settings.cache)
 async def read_category(
     category_id: int = schemas.CategoryFields.id,
 ):
@@ -63,6 +64,7 @@ async def read_category(
     status_code=status.HTTP_200_OK,
     description="Read specific category by name.",
 )
+@cache(expire=settings.cache)
 async def read_category(
     name: str = schemas.CategoryFields.name,
 ):

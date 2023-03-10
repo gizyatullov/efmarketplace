@@ -8,6 +8,7 @@ from captcha.image import ImageCaptcha
 from redis.asyncio import ConnectionPool, Redis
 
 from efmarketplace import schemas
+from efmarketplace.db import models
 from efmarketplace.pkg.types.strings import NotEmptyStr
 from efmarketplace.services.user import UserService
 from efmarketplace.settings import settings
@@ -29,26 +30,21 @@ class AuthService:
         self.user_service = user_service
         self.image_captcha = image_captcha
 
-    async def check_user_otp_code(
-        self, username: str, otp_code: str, get_orm_obj: bool = False
-    ):
-        user = await self.user_service.read_specific_user_by_username(
-            query=schemas.ReadUserByUserNameQuery(username=username), orm_obj=True
-        )
+    @staticmethod
+    async def _check_otp_code(user: models.User, otp_code: str) -> bool:
         if not user.otp:
-            return user if get_orm_obj else True
+            return True
         if not await user.check_otp(code=otp_code):
             raise exceptions.OTPIncorrect
-        return user if get_orm_obj else True
+        return True
 
-    async def check_user_password(self, cmd: schemas.AuthCommand) -> schemas.User:
+    async def _check_username_password(self, cmd: schemas.AuthCommand) -> models.User:
         user = await self.user_service.read_specific_user_by_username(
             query=schemas.ReadUserByUserNameQuery(username=cmd.username), orm_obj=True
         )
         if not user or not await user.check_password(password=cmd.password):
             raise IncorrectUsernameOrPassword
-
-        return schemas.User.from_orm(obj=user)
+        return user
 
     async def _get_image_captcha(self, value: NotEmptyStr) -> bytes:
         return self.image_captcha.generate(chars=value).read()
@@ -59,7 +55,8 @@ class AuthService:
         )
         return NotEmptyStr("".join(random_characters))
 
-    async def _bytes_per_base64_string(self, b: bytes) -> str:
+    @staticmethod
+    async def _bytes_per_base64_string(b: bytes) -> str:
         return base64.b64encode(s=b).decode(encoding="utf-8")
 
     @staticmethod
@@ -98,9 +95,15 @@ class AuthService:
         return schemas.CaptchaWithoutValue(uid=uid, image=image_in_base64)
 
     async def unplug_otp(self, cmd: schemas.UnplugOTPWithUserNameCommand):
-        u = await self.check_user_otp_code(
-            username=cmd.username, otp_code=cmd.otp_code, get_orm_obj=True
+        user = await self.user_service.read_specific_user_by_username(
+            query=schemas.ReadUserByUserNameQuery(username=cmd.username), orm_obj=True
         )
-        await u.unplug_otp()
-        await u.save()
+        await self._check_otp_code(user=user, otp_code=cmd.otp_code)
+        await user.unplug_otp()
+        await user.save()
         return {"detail": "success"}
+
+    async def login(self, cmd: schemas.AuthCommand) -> schemas.User:
+        u = await self._check_username_password(cmd=cmd)
+        await self._check_otp_code(user=u, otp_code=cmd.otp_code)
+        return schemas.User.from_orm(obj=u)

@@ -2,6 +2,7 @@ from pydantic.types import ConstrainedInt
 
 __all__ = [
     "PositiveIntWithZero",
+    "CustPositiveInt",
 ]
 
 
@@ -11,3 +12,7 @@ class PositiveIntWithZero(ConstrainedInt):
         pass
 
     ge = 0
+
+
+class CustPositiveInt(ConstrainedInt):
+    ge = 1

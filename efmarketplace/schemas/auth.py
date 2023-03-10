@@ -4,6 +4,7 @@ from efmarketplace.pkg.types import NotEmptySecretStr
 from efmarketplace.schemas.user import UserFields
 
 from .base import BaseModel
+from .otp import OTPFields
 
 __all__ = [
     "Auth",
@@ -43,7 +44,7 @@ class AuthCommand(BaseAuth):
     password: str = AuthFields.password
     uid_captcha: str = AuthFields.uid_captcha
     value_captcha: str = AuthFields.value_captcha
-    otp_code: str = ""
+    otp_code: str = OTPFields.otp_code
 
 
 class LogoutCommand(BaseAuth):

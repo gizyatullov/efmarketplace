@@ -57,6 +57,8 @@ class Settings(_Settings):
     LOG_LEVEL: LogLevel = LogLevel.INFO
     # After how many minutes to update quotes from binance ?
     FREQUENCY_PRICE_UPDATES: PositiveInt = 5
+    # The name of the service when installing TOTP in QR
+    TOTP_NAME: str = "efmarketplace"
 
     # PostgreSQL host.
     POSTGRES_HOST: str

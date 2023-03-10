@@ -4,7 +4,7 @@ from typing import List, Literal, Union, overload
 from efmarketplace import schemas
 from efmarketplace.db import models
 from efmarketplace.schemas import (
-    ChangeUserPasswordCommand,
+    ChangeUserPasswordWithIDCommand,
     CreateUserCommand,
     DeleteUserCommand,
     ReadUserByIdQuery,
@@ -101,7 +101,7 @@ class UserDAO(BaseDAO[Model]):
         return result
 
     @classmethod
-    async def change_password(cls, cmd: ChangeUserPasswordCommand) -> Schema:
+    async def change_password(cls, cmd: ChangeUserPasswordWithIDCommand) -> Schema:
         u = await cls.read(query=ReadUserByIdQuery(id=cmd.id), orm_obj=True)
         if not u or not await u.check_password(password=cmd.old_password):
             raise IncorrectOldPassword

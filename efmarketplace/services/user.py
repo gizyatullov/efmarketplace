@@ -7,6 +7,7 @@ import qrcode
 
 from efmarketplace import schemas
 from efmarketplace.db.dao.user import UserDAO
+from efmarketplace.settings import settings
 from efmarketplace.web.api import exceptions
 
 __all__ = ["UserService"]
@@ -39,7 +40,7 @@ class UserService:
 
     async def change_password(
         self,
-        cmd: schemas.ChangeUserPasswordCommand,
+        cmd: schemas.ChangeUserPasswordWithIDCommand,
     ) -> schemas.User:
         return await self.repository.change_password(cmd=cmd)
 
@@ -59,7 +60,7 @@ class UserService:
 
         k = await self.repository.set_otp(username=cmd.username)
         totp = pyotp.totp.TOTP(s=k).provisioning_uri(
-            name="efmarketplace", issuer_name=cmd.username
+            name=settings.TOTP_NAME, issuer_name=cmd.username
         )
         qr = qrcode.make(totp)
         buffer = io.BytesIO()

@@ -96,7 +96,10 @@ async def read_user(
 )
 async def change_password(
     cmd: schemas.ChangeUserPasswordCommand,
+    authorize: AuthJWT = Depends(),
 ):
+    id_ = authorize.get_raw_jwt()["uid"]
+    cmd = schemas.ChangeUserPasswordWithIDCommand(**cmd.dict(), id=id_)
     return await user_service.change_password(cmd=cmd)
 
 
@@ -125,9 +128,7 @@ async def delete_user(
 async def update_user(
     cmd: schemas.UpdateUserCommand,
 ):
-    return await user_service.update_specific_user_by_username(
-        cmd=cmd,
-    )
+    return await user_service.update_specific_user_by_username(cmd=cmd)
 
 
 @router.post(
@@ -187,5 +188,5 @@ async def unplug_otp(
     authorize: AuthJWT = Depends(),
 ):
     username = authorize.get_raw_jwt()["sub"]
-    cmd = schemas.UnplugOTPWithUserNameCommand(otp_code=cmd.otp_code, username=username)
+    cmd = schemas.UnplugOTPWithUserNameCommand(**cmd.dict(), username=username)
     return await auth_service.unplug_otp(cmd=cmd)

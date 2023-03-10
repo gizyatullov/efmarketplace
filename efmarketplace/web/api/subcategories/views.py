@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends, Security, status
 from fastapi.security import HTTPBearer
+from fastapi_cache.decorator import cache
 from pydantic import PositiveInt
 
 from efmarketplace import schemas
-from efmarketplace.pkg.types.integeres import PositiveIntWithZero
+from efmarketplace.pkg.types.integeres import CustPositiveInt, PositiveIntWithZero
+from efmarketplace.pkg.types.strings import NotEmptyStr
 from efmarketplace.services import subcategory_service
 from efmarketplace.services.authorization import auth_only
+from efmarketplace.settings import settings
 
 __all__ = [
     "router",
@@ -32,6 +35,7 @@ async def create_subcategory(
     status_code=status.HTTP_200_OK,
     description="Get all subcategories.",
 )
+@cache(expire=settings.cache)
 async def read_all_subcategories(
     limit: PositiveInt = 10,
     offset: PositiveIntWithZero = 0,
@@ -41,28 +45,26 @@ async def read_all_subcategories(
 
 
 @router.get(
-    "/{subcategory_id:int}",
+    "/{subcategory_id}",
     response_model=schemas.Subcategory,
     status_code=status.HTTP_200_OK,
     description="Read specific subcategory by id.",
 )
-async def read_subcategory(
-    subcategory_id: int = schemas.SubcategoryFields.id,
-):
+@cache(expire=settings.cache)
+async def read_subcategory(subcategory_id: CustPositiveInt):
     return await subcategory_service.read_specific_subcategory_by_id(
         query=schemas.ReadSubcategoryByIdQuery(id=subcategory_id),
     )
 
 
 @router.get(
-    "/{name:str}",
+    "/{name}",
     response_model=schemas.Subcategory,
     status_code=status.HTTP_200_OK,
     description="Read specific subcategory by name.",
 )
-async def read_subcategory(
-    name: str = schemas.SubcategoryFields.name,
-):
+@cache(expire=settings.cache)
+async def read_subcategory(name: NotEmptyStr):
     return await subcategory_service.read_specific_subcategory_by_name(
         query=schemas.ReadSubcategoryByNameQuery(name=name),
     )

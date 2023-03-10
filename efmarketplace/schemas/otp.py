@@ -21,7 +21,7 @@ class OTPFields:
         description="OTP key-secret", example="DJ6OERKWPG4YMKOLPZ3ETMGVGG6GDOER"
     )
     qr = Field(description="QR image in base64", example=qr_otp_in_base64)
-    otp_code = Field(description="Generated OTP code", example="519452")
+    otp_code = Field(description="Generated OTP code", example="519452", default="")
 
 
 class BaseOTP(BaseModel):

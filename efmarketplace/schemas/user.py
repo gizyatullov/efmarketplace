@@ -20,6 +20,7 @@ __all__ = [
     "UpdateUserCommand",
     "DeleteUserCommand",
     "ChangeUserPasswordCommand",
+    "ChangeUserPasswordWithIDCommand",
     "UserRole",
     "UserName",
 ]
@@ -167,9 +168,12 @@ class DeleteUserCommand(BaseUser):
 
 
 class ChangeUserPasswordCommand(BaseUser):
-    id: PositiveInt = UserFields.id
     old_password: str = UserFields.old_password
     new_password: str = UserFields.new_password
+
+
+class ChangeUserPasswordWithIDCommand(ChangeUserPasswordCommand):
+    id: PositiveInt = UserFields.id
 
 
 # Query
