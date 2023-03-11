@@ -7,3 +7,4 @@ from .notification_status import *
 from .subcategory import *
 from .ticket_models import *
 from .user import *
+from .favorites import *

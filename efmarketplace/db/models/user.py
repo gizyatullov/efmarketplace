@@ -26,6 +26,7 @@ class User(models.Model):
     user_ban_date = fields.DatetimeField(null=True)
 
     notification_statuses = fields.ReverseRelation["NotificationStatus"]
+    favorites = fields.ReverseRelation["Favorites"]
 
     class Meta:
         table = "users"

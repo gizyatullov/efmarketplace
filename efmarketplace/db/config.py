@@ -10,6 +10,7 @@ MODELS_MODULES: List[str] = [
     "efmarketplace.db.models.subcategory",
     "efmarketplace.db.models.notification",
     "efmarketplace.db.models.notification_status",
+    "efmarketplace.db.models.favorites",
     "efmarketplace.db.models.ticket_models",
 ]
 

@@ -10,6 +10,7 @@ from efmarketplace.web.api import (
     subcategories,
     ticket,
     users,
+    favorites,
 )
 from efmarketplace.web.api.admin_ import notification as admin_notification
 
@@ -31,3 +32,4 @@ api_router.include_router(ticket.router, prefix="/ticket", tags=["Ticket"])
 api_router.include_router(
     admin_notification.router, prefix="/admin-notification", tags=["Admin-Notification"]
 )
+api_router.include_router(favorites.router, prefix="/favorites", tags=["Favorites"])

@@ -23,6 +23,7 @@ __all__ = [
     "ChangeUserPasswordWithIDCommand",
     "UserRole",
     "UserName",
+    "UserIDMixin",
 ]
 
 
@@ -141,6 +142,10 @@ class UsersWithPagination(BaseUser):
 
 class UserName(BaseUser):
     username: str = UserFields.username
+
+
+class UserIDMixin(BaseUser):
+    user_id: PositiveInt = UserFields.id
 
 
 # Commands.
