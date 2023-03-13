@@ -1,7 +1,8 @@
 from pydantic import Field, PositiveInt
 
-from .base import BaseModel
 from efmarketplace.pkg.types.integeres import PositiveIntWithZero
+
+from .base import BaseModel
 
 __all__ = [
     "ForPaginationFields",

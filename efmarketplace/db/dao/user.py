@@ -11,6 +11,7 @@ from efmarketplace.schemas import (
     ReadUserByUserNameQuery,
     UpdateUserCommand,
 )
+from efmarketplace.web.api import exceptions
 from efmarketplace.web.api.exceptions.user import IncorrectOldPassword
 
 from .base import BaseDAO
@@ -26,6 +27,8 @@ class UserDAO(BaseDAO[Model]):
 
     @staticmethod
     async def create(cmd: CreateUserCommand) -> Schema:
+        if Model.exists(username=cmd.username):
+            raise exceptions.AlreadyExists(message="login busy")
         u = Model(
             username=cmd.username,
             role_name=cmd.role_name,

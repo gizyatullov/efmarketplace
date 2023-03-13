@@ -1,9 +1,8 @@
-from typing import List, Union
-
-from tortoise import models
+from typing import Union
 
 from efmarketplace import schemas
 from efmarketplace.db.models.category import Category
+from efmarketplace.web.api import exceptions
 
 from .base import BaseDAO
 
@@ -15,6 +14,8 @@ __all__ = [
 class CategoryDAO(BaseDAO):
     @staticmethod
     async def create(cmd: schemas.CreateCategoryCommand) -> schemas.Category:
+        if await Category.exists(name=cmd.name):
+            raise exceptions.AlreadyExists
         c = await Category.create(**cmd.dict())
         return schemas.Category.from_orm(c)
 

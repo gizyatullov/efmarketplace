@@ -3,8 +3,8 @@ from typing import List
 from pydantic import Field, PositiveInt
 
 from .base import BaseModel
-from .user import UserFields, UserIDMixin
 from .general import PaginationMixin, ReadAllQueryMixin
+from .user import UserFields, UserIDMixin
 
 __all__ = [
     "FavoritesFields",

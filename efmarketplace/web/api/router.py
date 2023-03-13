@@ -6,11 +6,11 @@ from efmarketplace.web.api import (
     cities,
     countries,
     docs,
+    favorites,
     prices,
     subcategories,
     ticket,
     users,
-    favorites,
 )
 from efmarketplace.web.api.admin_ import notification as admin_notification
 

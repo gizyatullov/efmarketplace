@@ -1,8 +1,11 @@
-from .base import BaseDAO
 from efmarketplace import schemas
 from efmarketplace.db import models
 
-__all__ = ["FavoritesDAO", ]
+from .base import BaseDAO
+
+__all__ = [
+    "FavoritesDAO",
+]
 
 Model = models.Favorites
 Schema = schemas.Favorites
@@ -16,8 +19,9 @@ class FavoritesDAO(BaseDAO[Model]):
 
     @staticmethod
     async def read_all(query: ReadAllFavoritesQuery) -> schemas.FavoritesWithPagination:
-        f = await Model.filter(user_id=query.user_id,
-                               id__gt=query.limit * query.offset).limit(query.limit)
+        f = await Model.filter(
+            user_id=query.user_id, id__gt=query.limit * query.offset
+        ).limit(query.limit)
         return schemas.FavoritesWithPagination(
             items=[Schema.from_orm(item) for item in f],
             total=len(f),

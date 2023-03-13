@@ -16,7 +16,9 @@ class Favorites(models.Model):
 
     class Meta:
         unique_together = (("user_id", "product_id"),)
-        ordering = ["-id", ]
+        ordering = [
+            "-id",
+        ]
 
     def __str__(self) -> str:
         return f"Favorites {self.product_id}"

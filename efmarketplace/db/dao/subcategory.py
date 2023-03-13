@@ -19,6 +19,8 @@ class SubcategoryDAO(BaseDAO):
             raise exceptions.NotFound(
                 message=f"Not found category with ID {cmd.category_id}"
             )
+        if await Subcategory.exists(name=cmd.name):
+            raise exceptions.AlreadyExists
         s = await Subcategory.create(**cmd.dict())
         return schemas.Subcategory.from_orm(s)
 
